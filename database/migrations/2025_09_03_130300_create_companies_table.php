@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+       Schema::create('companies', function (Blueprint $table) {
+            $table->id(); // Primary key
+            $table->string('naam');
+            $table->string('adres');
+            $table->string('contactpersoon');
+            $table->string('email')->unique();
+            $table->string('telefoon')->nullable();
+            $table->timestamps(); // created_at & updated_at
         });
     }
 
