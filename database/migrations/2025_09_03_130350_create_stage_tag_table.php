@@ -6,22 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('stage_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('stage_id')->constrained('stages')->onDelete('cascade'); // koppeling naar stages
-            $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade'); // koppeling naar tags
-            $table->timestamps();
+            $table->foreignId('stage_id')
+                  ->constrained('stages')
+                  ->onDelete('cascade');
+
+            $table->foreignId('tag_id')
+                  ->constrained('tags')
+                  ->onDelete('cascade');
+
+            $table->primary(['stage_id', 'tag_id']); // voorkomt duplicate
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('stage_tag');

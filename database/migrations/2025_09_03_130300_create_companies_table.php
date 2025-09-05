@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('adres');
             $table->string('contactpersoon');
             $table->string('email')->unique();
-            $table->string('telefoon')->nullable();
+          $table->string('telefoon'); // standaard NOT NULL
             $table->timestamps(); // created_at & updated_at
         });
     }
