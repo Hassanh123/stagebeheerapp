@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stages', function (Blueprint $table) {
-            $table->id(); 
-            $table->integer('stage_id'); 
-            $table->string('titel'); 
-            $table->text('beschrijving'); 
-            $table->string('status'); 
-            $table->integer('bedrijf_id'); 
+            $table->id();
+            $table->string('titel');
+            $table->text('beschrijving');
+            $table->string('status')->default('vrij');
+            $table->foreignId('bedrijf_id')->constrained('bedrijven');
+            $table->foreignId('teacher_id')->constrained('teachers');
             $table->timestamps(); // created_at en updated_at
         });
     }
