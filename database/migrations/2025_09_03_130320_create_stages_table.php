@@ -11,24 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('stages', function (Blueprint $table) {
+        Schema::create('stages', function (Blueprint $table) {
     $table->id();
     $table->string('titel');
     $table->text('beschrijving');
-
-// Zonder default
-$table->enum('status', ['vrij', 'gekozen', 'akkoord', 'afgewezen']);
-
-
-    // Verwijst naar companies
-    $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
-
-    // Verwijst naar teachers
-    $table->foreignId('teacher_id')->constrained('teachers')->onDelete('cascade');
-
+    $table->string('status')->default('vrij');
+    $table->foreignId('company_id')->constrained('companies'); // <- correct
+    $table->foreignId('teacher_id')->constrained('teachers');
     $table->timestamps();
 });
-
 
     }
 

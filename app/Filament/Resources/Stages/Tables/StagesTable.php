@@ -14,26 +14,42 @@ class StagesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('stage_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('titel')
-                    ->searchable(),
-                TextColumn::make('status')
-                    ->searchable(),
-                TextColumn::make('bedrijf_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+    ->columns([
+    TextColumn::make('id')
+        ->label('Stage ID')
+        ->numeric()
+        ->sortable(),
+
+    TextColumn::make('titel')
+        ->label('Titel')
+        ->searchable(),
+
+    TextColumn::make('status')
+        ->label('Status')
+        ->searchable(),
+
+    TextColumn::make('company_id')
+        ->label('Bedrijf')
+        ->numeric()
+        ->sortable(),
+
+    TextColumn::make('teacher_id')
+        ->label('Begeleider')
+        ->numeric()
+        ->sortable(),
+
+    TextColumn::make('created_at')
+        ->label('Aangemaakt')
+        ->dateTime()
+        ->sortable()
+        ->toggleable(isToggledHiddenByDefault: true),
+
+    TextColumn::make('updated_at')
+        ->label('Bijgewerkt')
+        ->dateTime()
+        ->sortable()
+        ->toggleable(isToggledHiddenByDefault: true),
+])
             ->filters([
                 //
             ])
