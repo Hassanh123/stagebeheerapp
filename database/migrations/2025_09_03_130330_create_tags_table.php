@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id(); // auto-increment primary key
-            $table->integer('tag_id'); // extra integer kolom
-            $table->string('naam'); // string kolom voor naam
-            $table->timestamps(); // created_at en updated_at
-        });
+       Schema::create('tags', function (Blueprint $table) {
+    $table->id(); // auto-increment primary key
+    $table->string('naam'); // naam van de tag
+    $table->timestamps(); // created_at en updated_at
+});
+
     }
 
     /**

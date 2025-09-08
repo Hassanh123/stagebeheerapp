@@ -15,7 +15,7 @@ class TagsTable
     {
         return $table
             ->columns([
-                TextColumn::make('tag_id')
+                TextColumn::make('id')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('naam')

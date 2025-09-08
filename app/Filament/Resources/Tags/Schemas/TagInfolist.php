@@ -11,13 +11,17 @@ class TagInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('tag_id')
-                    ->numeric(),
-                TextEntry::make('naam'),
+                TextEntry::make('id')
+                    ->numeric()
+                    ->label('ID'),
+                TextEntry::make('naam')
+                    ->label('Naam'),
                 TextEntry::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->label('Created At'), // label toegevoegd
                 TextEntry::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->label('Updated At'), // label toegevoegd
             ]);
     }
 }

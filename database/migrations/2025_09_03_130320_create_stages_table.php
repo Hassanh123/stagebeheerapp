@@ -15,9 +15,12 @@ return new class extends Migration
     $table->id();
     $table->string('titel');
     $table->text('beschrijving');
-    $table->string('status')->default('vrij');
 
-    // Verwijst naar companies (niet 'bedrijven')
+// Zonder default
+$table->enum('status', ['vrij', 'gekozen', 'akkoord', 'afgewezen']);
+
+
+    // Verwijst naar companies
     $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
 
     // Verwijst naar teachers
