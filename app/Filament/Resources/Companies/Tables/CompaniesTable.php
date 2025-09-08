@@ -14,24 +14,43 @@ class CompaniesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('naam')
-                    ->searchable(),
-                TextColumn::make('adres')
-                    ->searchable(),
-                TextColumn::make('contactpersoon')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+        ->columns([
+        TextColumn::make('id')
+            ->label('ID')
+            ->numeric()
+            ->sortable(),
+
+        TextColumn::make('naam')
+            ->label('Bedrijfsnaam')
+            ->searchable(),
+
+        TextColumn::make('adres')
+            ->label('Adres')
+            ->searchable(),
+
+        TextColumn::make('contactpersoon')
+            ->label('Contactpersoon')
+            ->searchable(),
+
+        TextColumn::make('email')
+            ->label('Email')
+            ->searchable(),
+
+        TextColumn::make('telefoon')
+            ->label('Telefoon')
+            ->searchable(),
+
+        TextColumn::make('created_at')
+            ->label('Aangemaakt')
+            ->dateTime()
+            ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
+
+        TextColumn::make('updated_at')
+            ->label('Bijgewerkt')
+            ->dateTime()
+            ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
