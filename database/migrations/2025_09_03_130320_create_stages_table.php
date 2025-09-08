@@ -15,7 +15,7 @@ return new class extends Migration
     $table->id();
     $table->string('titel');
     $table->text('beschrijving');
-    $table->string('status')->default('vrij');
+    $table->enum('status', ['vrij', 'op slot'])->default('vrij');
     $table->foreignId('company_id')->constrained('companies'); // <- correct
     $table->foreignId('teacher_id')->constrained('teachers');
     $table->timestamps();
