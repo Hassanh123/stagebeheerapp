@@ -11,18 +11,15 @@ class StudentForm
     {
         return $schema
             ->components([
-                TextInput::make('student_id')
-                    ->required()
-                    ->numeric(),
                 TextInput::make('naam')
                     ->required(),
                 TextInput::make('email')
                     ->label('Email address')
                     ->email()
                     ->required(),
-                TextInput::make('stage_id')
-                    ->required()
-                    ->numeric(),
+                TextInput::make('student_number')
+                    ->label('Studentnummer')
+                    ->required(), // ✅ make sure this is required
             ]);
     }
 }

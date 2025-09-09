@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('students', function (Blueprint $table) {
-            $table->id(); 
-            $table->integer('student_id'); 
-            $table->string('naam'); 
-            $table->string('email')->unique();
-            $table->integer('stage_id');
-            $table->timestamps(); // created_at en updated_at
-        });
+      Schema::create('students', function (Blueprint $table) {
+   $table->id(); // Makes student_id auto-increment primary key
+    $table->string('naam');
+    $table->string('email')->unique();
+    $table->string('student_number')->unique();
+    $table->timestamps();
+});
+
     }
 
     /**

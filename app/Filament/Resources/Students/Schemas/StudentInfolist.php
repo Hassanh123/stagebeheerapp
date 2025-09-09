@@ -11,17 +11,12 @@ class StudentInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('student_id')
-                    ->numeric(),
+                TextEntry::make('id')->label('ID'),
                 TextEntry::make('naam'),
-                TextEntry::make('email')
-                    ->label('Email address'),
-                TextEntry::make('stage_id')
-                    ->numeric(),
-                TextEntry::make('created_at')
-                    ->dateTime(),
-                TextEntry::make('updated_at')
-                    ->dateTime(),
+                TextEntry::make('email')->label('Email address'),
+                TextEntry::make('student_number')->label('Studentnummer'),
+                TextEntry::make('created_at')->dateTime(),
+                TextEntry::make('updated_at')->dateTime(),
             ]);
     }
 }
