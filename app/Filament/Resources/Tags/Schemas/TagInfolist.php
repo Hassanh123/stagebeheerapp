@@ -11,9 +11,6 @@ class TagInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')
-                    ->numeric()
-                    ->label('ID'),
                 TextEntry::make('naam')
                     ->label('Naam'),
                 TextEntry::make('created_at')

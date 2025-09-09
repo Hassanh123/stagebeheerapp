@@ -15,9 +15,6 @@ class TagsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('naam')
                     ->searchable(),
                 TextColumn::make('created_at')
