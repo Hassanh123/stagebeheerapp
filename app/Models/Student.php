@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
@@ -12,14 +11,11 @@ class Student extends Model
         'naam',
         'email',
         'student_number',
-        'stage_id',
+        'photo_url',
     ];
 
-    /**
-     * Relatie: student kan één stage hebben
-     */
-    public function stage(): BelongsTo
+    public function stages(): HasMany
     {
-        return $this->belongsTo(Stage::class);
+        return $this->hasMany(Stage::class);
     }
 }

@@ -7,12 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-// ✅ Add these imports
-use App\Models\Company;
-use App\Models\Teacher;
-use App\Models\Student;
-use App\Models\Tag;
-
 class Stage extends Model
 {
     protected $fillable = [
@@ -24,21 +18,25 @@ class Stage extends Model
         'student_id',
     ];
 
+    // Stage belongs to a company
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
+    // Stage belongs to a teacher
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class);
     }
 
+    // Stage has many students
     public function students(): HasMany
     {
         return $this->hasMany(Student::class);
     }
 
+    // Stage has many-to-many tags
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'stage_tag', 'stage_id', 'tag_id');

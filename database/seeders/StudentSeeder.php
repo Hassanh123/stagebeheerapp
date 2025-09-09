@@ -4,31 +4,44 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use App\Models\Stage;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
+        // Get all stage IDs
+        $stageIds = Stage::pluck('id')->toArray();
+
         $students = [
             ['naam' => 'Jan Jansen', 'email' => 'jan.jansen@example.com'],
             ['naam' => 'Lisa de Vries', 'email' => 'lisa.devries@example.com'],
             ['naam' => 'Mohammed Ali', 'email' => 'mohammed.ali@example.com'],
             ['naam' => 'Sofia González', 'email' => 'sofia.gonzalez@example.com'],
-            // ... add more students
+            ['naam' => 'Ethan Chen', 'email' => 'ethan.chen@example.com'],
+            ['naam' => 'Amina Hassan', 'email' => 'amina.hassan@example.com'],
+            ['naam' => 'David O’Connor', 'email' => 'david.oconnor@example.com'],
+            ['naam' => 'Yuki Tanaka', 'email' => 'yuki.tanaka@example.com'],
+            ['naam' => 'Carlos Ramirez', 'email' => 'carlos.ramirez@example.com'],
+            ['naam' => 'Fatima Zahra', 'email' => 'fatima.zahra@example.com'],
         ];
 
+        // Generate additional students to reach 50
+        for ($i = 11; $i <= 50; $i++) {
+            $students[] = [
+                'naam' => 'Student ' . $i,
+                'email' => 'student' . $i . '@example.com',
+            ];
+        }
+
+        // Insert all students
         foreach ($students as $index => $student) {
-
-            // Fetch a random user image from randomuser.me
-            $response = Http::get('https://randomuser.me/api/?inc=picture');
-            $picture = $response->json('results.0.picture.medium'); // medium size photo
-
             DB::table('students')->insert([
                 'naam' => $student['naam'],
                 'email' => $student['email'],
-                'student_number' => 'S'.str_pad($index + 1, 4, '0', STR_PAD_LEFT),
-                'photo' => $picture, // store the URL
+                'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
+                'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
+                'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
