@@ -16,6 +16,5 @@ class Student extends Model
     // Voorbeeld: student kan meerdere stages hebben
     public function stages(): HasMany
     {
-        return $this->has(Stage::class);
+        return $this->has(Stage::class);}
     }
-}

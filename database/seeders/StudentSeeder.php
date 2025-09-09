@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
 
 class StudentSeeder extends Seeder
@@ -50,5 +51,31 @@ class StudentSeeder extends Seeder
                 'updated_at' => now(),
             ]);
         }
+=======
+use App\Models\Student;
+use App\Models\Stage;
+
+class StudentSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // Kies een stage die vrij is
+        $stage = Stage::where('status', 'vrij')->first();
+
+        Student::create([
+            'naam' => 'Jan Jansen',
+            'email' => 'jan.jansen@example.com',
+            'stage_id' => $stage->id,
+        ]);
+
+        Student::create([
+            'naam' => 'Lisa de Vries',
+            'email' => 'lisa.devries@example.com',
+            'stage_id' => $stage->id,
+        ]);
+>>>>>>> fb3659679fb7b861ea9c7668c72c87b4a6cb1215
     }
 }

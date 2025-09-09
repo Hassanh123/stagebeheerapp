@@ -11,6 +11,10 @@ class StudentForm
     {
         return $schema
             ->components([
+
+                TextInput::make('id')
+                    ->required()
+                    ->numeric(),
                 TextInput::make('naam')
                     ->required(),
                 TextInput::make('email')

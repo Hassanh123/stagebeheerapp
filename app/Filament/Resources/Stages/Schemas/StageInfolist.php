@@ -11,11 +11,14 @@ class StageInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('stage_id')
+                TextEntry::make('id')
                     ->numeric(),
                 TextEntry::make('titel'),
+                TextEntry::make('beschrijving'),
                 TextEntry::make('status'),
-                TextEntry::make('bedrijf_id')
+                TextEntry::make('company_id')
+                    ->numeric(),
+                TextEntry::make('teacher_id')
                     ->numeric(),
                 TextEntry::make('created_at')
                     ->dateTime(),

@@ -12,6 +12,9 @@ class StudentInfolist
         return $schema
             ->components([
                 TextEntry::make('id')->label('ID'),
+
+                TextEntry::make('id')
+                    ->numeric(),
                 TextEntry::make('naam'),
                 TextEntry::make('email')->label('Email address'),
                 TextEntry::make('student_number')->label('Studentnummer'),

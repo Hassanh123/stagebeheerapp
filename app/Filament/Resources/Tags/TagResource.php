@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Select;
 
 class TagResource extends Resource
 {
@@ -22,11 +23,19 @@ class TagResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'titel';
+    protected static ?string $recordTitleAttribute = 'naam'; // pas van 'titel' naar 'naam'
 
     public static function form(Schema $schema): Schema
     {
-        return TagForm::configure($schema);
+        // Voeg eventueel stages toe bij het formulier, zodat je via TagResource stages kunt koppelen
+        return TagForm::configure($schema)
+            ->components([
+                Select::make('stages')
+                    ->multiple()
+                    ->relationship('stages', 'titel')
+                    ->label('Stages')
+                    ->columnSpanFull(),
+            ]);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -41,8 +50,9 @@ class TagResource extends Resource
 
     public static function getRelations(): array
     {
+        // Als je Filament relation managers wilt toevoegen, kun je die hier registreren
         return [
-            //
+            // b.v. RelationManagers\StagesRelationManager::class
         ];
     }
 
