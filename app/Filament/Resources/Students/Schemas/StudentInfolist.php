@@ -11,15 +11,26 @@ class StudentInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('id')->label('ID'),
-
                 TextEntry::make('id')
-                    ->numeric(),
+                    ->label('ID'),
                 TextEntry::make('naam'),
-                TextEntry::make('email')->label('Email address'),
-                TextEntry::make('student_number')->label('Studentnummer'),
-                TextEntry::make('created_at')->dateTime(),
-                TextEntry::make('updated_at')->dateTime(),
+                TextEntry::make('email')
+                    ->label('Email address'),
+                TextEntry::make('student_number')
+                    ->label('Studentnummer'),
+
+                // Show related Stage title
+                TextEntry::make('stage.titel')
+                    ->label('Stage'),
+
+                // Show related Teacher name
+                TextEntry::make('stage.teacher.naam')
+                    ->label('Begeleider'),
+
+                TextEntry::make('created_at')
+                    ->dateTime(),
+                TextEntry::make('updated_at')
+                    ->dateTime(),
             ]);
     }
 }

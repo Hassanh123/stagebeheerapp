@@ -5,10 +5,8 @@ namespace App\Filament\Resources\Stages\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\MultiSelect;
-
+use Filament\Schemas\Schema;
 
 class StageForm
 {
@@ -16,20 +14,46 @@ class StageForm
     {
         return $schema
             ->components([
-                TextInput::make('stage_id')
-                    ->required()
-                    ->numeric(),
                 TextInput::make('titel')
-                    ->tel()
-                    ->required(),
+                    ->required()
+                    ->columnSpanFull()
+                    ->label('Titel'),
+                
                 Textarea::make('beschrijving')
                     ->required()
-                    ->columnSpanFull(),
-                TextInput::make('status')
-                    ->required(),
-                TextInput::make('bedrijf_id')
+                    ->columnSpanFull()
+                    ->label('Beschrijving'),
+                
+                Select::make('company_id')
+                    ->relationship('company', 'naam')
                     ->required()
-                    ->numeric(),
+                    ->label('Bedrijf'),
+                
+                Select::make('student_id')
+                    ->relationship('students', 'naam')
+                    ->nullable()
+                    ->helperText('Wordt automatisch gezet wanneer een student kiest')
+                    ->label('Student'),
+                
+                Select::make('teacher_id')
+                    ->relationship('teacher', 'naam')
+                    ->nullable()
+                    ->label('Begeleider'),
+                
+                MultiSelect::make('tags')
+                    ->relationship('tags', 'naam')
+                    ->label('Tags'),
+                
+                Select::make('status')
+                    ->options([
+                        'vrij' => 'Vrij',
+                        'gekozen' => 'Gekozen',
+                        'akkoord' => 'Akkoord',
+                        'niet_akkoord' => 'Niet akkoord',
+                    ])
+                    ->default('vrij')
+                    ->required()
+                    ->label('Status'),
             ]);
     }
 }
