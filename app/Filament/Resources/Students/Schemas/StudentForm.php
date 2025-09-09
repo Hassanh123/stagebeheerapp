@@ -11,10 +11,6 @@ class StudentForm
     {
         return $schema
             ->components([
-
-                TextInput::make('id')
-                    ->required()
-                    ->numeric(),
                 TextInput::make('naam')
                     ->required(),
                 TextInput::make('email')
@@ -23,7 +19,8 @@ class StudentForm
                     ->required(),
                 TextInput::make('student_number')
                     ->label('Studentnummer')
-                    ->required(), // ✅ make sure this is required
+                    ->required()
+                    ->unique(table: 'students', column: 'student_number'), // voorkomt dubbele nummers
             ]);
     }
 }

@@ -15,28 +15,12 @@ class StudentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('naam')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('stage_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('naam')->searchable(),
+                TextColumn::make('email')->label('Email address')->searchable(),
+                TextColumn::make('student_number')->label('Studentnummer')->searchable()->sortable(),
+                TextColumn::make('stage.titel')->label('Gekozen Stage')->sortable()->searchable(),
+                TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->recordActions([
                 ViewAction::make(),
