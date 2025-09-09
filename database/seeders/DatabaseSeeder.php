@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TagSeeder::class);
          $this->call(CompanySeeder::class);
           $this->call(TeacherSeeder::class);
+          $this->call(StageSeeder::class);
+          $this->call(StudentSeeder::class);
     }
 }
