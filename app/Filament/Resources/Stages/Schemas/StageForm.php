@@ -12,18 +12,19 @@ class StageForm
     {
         return $schema
             ->components([
-                TextInput::make('stage_id')
-                    ->required()
-                    ->numeric(),
                 TextInput::make('titel')
-                    ->tel()
-                    ->required(),
+                    ->required()
+                    ->maxLength(255), // past bij string('titel') in DB
                 Textarea::make('beschrijving')
                     ->required()
                     ->columnSpanFull(),
                 TextInput::make('status')
-                    ->required(),
-                TextInput::make('bedrijf_id')
+                    ->required()
+                    ->default('vrij'),
+                TextInput::make('company_id')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('teacher_id')
                     ->required()
                     ->numeric(),
             ]);

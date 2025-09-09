@@ -9,15 +9,16 @@ class Student extends Model
 {
     use HasFactory;
 
+
+    public $incrementing = true;          // als student_id auto_increment is
+    protected $keyType = 'int';
+
     protected $fillable = [
         'naam',
         'email',
         'stage_id',
     ];
 
-    /**
-     * Relatie: een student hoort bij één stage
-     */
     public function stage()
     {
         return $this->belongsTo(Stage::class);
