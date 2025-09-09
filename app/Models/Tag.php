@@ -9,8 +9,9 @@ class Tag extends Model
 {
     protected $fillable = ['naam'];
 
-    public function stages(): BelongsToMany
-    {
-        return $this->belongsToMany(Stage::class, 'stage_tag');
-    }
+   public function stages()
+{
+    return $this->belongsToMany(Stage::class, 'stage_tag', 'tag_id', 'stage_id');
+}
+
 }

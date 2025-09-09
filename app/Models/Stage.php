@@ -48,8 +48,9 @@ class Stage extends Model
     /**
      * Relatie: stage heeft meerdere tags (many-to-many)
      */
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class, 'stage_tag'); // pivot-tabel stage_tag
-    }
+   public function tags()
+{
+    return $this->belongsToMany(Tag::class, 'stage_tag', 'stage_id', 'tag_id');
+}
+
 }
