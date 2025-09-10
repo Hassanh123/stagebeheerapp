@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Student extends Model
 {
@@ -12,10 +12,12 @@ class Student extends Model
         'email',
         'student_number',
         'photo_url',
+        'stage_id', // important to link chosen stage
     ];
 
-    public function stages(): HasMany
+    // Each student can choose one stage
+    public function stage(): BelongsTo
     {
-        return $this->hasMany(Stage::class);
+        return $this->belongsTo(Stage::class);
     }
 }

@@ -8,19 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-       Schema::create('students', function (Blueprint $table) {
-    $table->id();
-    $table->string('naam');
-    $table->string('email')->unique();
-    $table->string('student_number')->unique();
-    $table->string('photo_url')->nullable();
-    $table->foreignId('stage_id')->nullable()->constrained('stages')->nullOnDelete();
-    $table->timestamps();
-});
+        Schema::create('students', function (Blueprint $table) {
+            $table->id();
+            $table->string('naam');
+            $table->string('email')->unique();
+            $table->string('student_number')->unique();
+            $table->string('photo_url')->nullable();
+            $table->foreignId('stage_id')->nullable()->constrained('stages'); // link chosen stage
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('students');
     }
+    
 };

@@ -40,7 +40,7 @@ class StageForm
                     ->nullable()
                     ->label('Begeleider'),
                 
-                MultiSelect::make('tags')
+                Select::make('tags')
                     ->relationship('tags', 'naam')
                     ->label('Tags'),
                 
