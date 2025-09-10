@@ -18,32 +18,33 @@ class StageForm
                     ->required()
                     ->columnSpanFull()
                     ->label('Titel'),
-                
+
                 Textarea::make('beschrijving')
                     ->required()
                     ->columnSpanFull()
                     ->label('Beschrijving'),
-                
+
                 Select::make('company_id')
                     ->relationship('company', 'naam')
                     ->required()
                     ->label('Bedrijf'),
-                
+
                 Select::make('student_id')
                     ->relationship('students', 'naam')
                     ->nullable()
                     ->helperText('Wordt automatisch gezet wanneer een student kiest')
                     ->label('Student'),
-                
+
                 Select::make('teacher_id')
                     ->relationship('teacher', 'naam')
                     ->nullable()
                     ->label('Begeleider'),
-                
+
                 Select::make('tags')
-                    ->relationship('tags', 'naam')
+                    ->multiple() // laat meerdere selecties toe
+                    ->relationship('tags', 'naam') // 'tags' verwijst naar de methode in Stage-model
                     ->label('Tags'),
-                
+
                 Select::make('status')
                     ->options([
                         'vrij' => 'Vrij',
