@@ -15,7 +15,6 @@ class StudentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('ID')->sortable(),
                 TextColumn::make('naam')->searchable(),
                 TextColumn::make('email')->label('Email address')->searchable(),
                 TextColumn::make('student_number')->label('Studentnummer')->searchable()->sortable(),
