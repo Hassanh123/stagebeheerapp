@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Stages\Tables;
 
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Table;
 use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
@@ -20,7 +19,13 @@ class StagesTable
                 TextColumn::make('status')->label('Status')->sortable(),
                 TextColumn::make('company.naam')->label('Bedrijf')->searchable(),
                 TextColumn::make('teacher.naam')->label('Begeleider')->searchable(),
-              
+
+                // Gebruik TextColumn i.p.v. de deprecated TagsColumn.
+                // ->badge() rendert elk tag-item als een badge (werkt ook voor belongsToMany).
+                TextColumn::make('tags.naam')
+                    ->label('Tags')
+                    ->badge()
+                    ->wrap(),
             ])
             ->recordActions([
                 ViewAction::make(),

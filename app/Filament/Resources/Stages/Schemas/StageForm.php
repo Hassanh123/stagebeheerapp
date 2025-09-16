@@ -24,22 +24,23 @@ class StageForm
                     ->label('Beschrijving'),
 
                 Select::make('company_id')
-                    ->relationship('company', 'naam')
+                    ->relationship(name: 'company', titleAttribute: 'naam')
                     ->required()
                     ->label('Bedrijf'),
 
                 Select::make('teacher_id')
-                    ->relationship('teacher', 'naam')
+                    ->relationship(name: 'teacher', titleAttribute: 'naam')
                     ->nullable()
                     ->label('Begeleider'),
 
-                // Combobox voor tags
+                // Tags: belongsToMany -> gebruik relationship() + multiple()
                 Select::make('tags')
                     ->label('Tags')
-                    ->relationship('tags', 'naam')   // verwijst naar Stage::tags()
-                    ->preload()                       // laad bestaande tags
-                    ->searchable()                     // zoekfunctie
-                    ->multiple(),                  // meerdere selecties
+                    ->relationship(name: 'tags', titleAttribute: 'naam')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->columnSpanFull(),
 
                 Select::make('status')
                     ->options([
