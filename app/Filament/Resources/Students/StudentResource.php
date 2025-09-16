@@ -10,15 +10,19 @@ use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Schemas\StudentInfolist;
 use App\Filament\Resources\Students\Tables\StudentsTable;
 use App\Models\Student;
+use Filament\Support\Icons\Heroicon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
+
 
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
-   // protected static string $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    // Menu-icoon als string (correct type)
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static ?string $recordTitleAttribute = 'naam';
 
     public static function form(Schema $schema): Schema
