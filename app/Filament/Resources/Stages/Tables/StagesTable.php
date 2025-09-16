@@ -16,12 +16,11 @@ class StagesTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('Stage ID')->sortable(),
                 TextColumn::make('titel')->label('Titel')->searchable(),
                 TextColumn::make('status')->label('Status')->sortable(),
                 TextColumn::make('company.naam')->label('Bedrijf')->searchable(),
                 TextColumn::make('teacher.naam')->label('Begeleider')->searchable(),
-                TagsColumn::make('tags')->label('Tags')->getStateUsing(fn($record) => $record->tags->pluck('naam')),
+              
             ])
             ->recordActions([
                 ViewAction::make(),

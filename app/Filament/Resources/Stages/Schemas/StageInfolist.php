@@ -11,7 +11,7 @@ class StageInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            TextEntry::make('id')->label('Stage ID'),
+    
             TextEntry::make('titel')->label('Titel'),
             TextEntry::make('beschrijving')->label('Beschrijving')->columnSpanFull(),
             TextEntry::make('status')->label('Status'),
