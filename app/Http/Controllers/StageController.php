@@ -3,63 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stage;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class StageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Toon alle beschikbare stages op de homepage
      */
-    public function index()
-    {
-         return view('stages');
-    }
+  public function index()
+{
+    // Haal alle stages op met tags, teacher en company
+    $stages = Stage::with(['tags', 'teacher', 'company'])->get();
+
+    return view('home', compact('stages'));
+}
+
 
     /**
-     * Show the form for creating a new resource.
+     * Laat een student een stage kiezen
+     * 
+     * @param  Request $request
+     * @param  Stage $stage
      */
-    public function create()
+    public function choose(Request $request, Stage $stage)
     {
-        //
-    }
+        // Valideer dat student_id is meegegeven
+        $data = $request->validate([
+            'student_id' => 'required|exists:students,id',
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $student = Student::find($data['student_id']);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Stage $stage)
-    {
-        //
-    }
+        // Check of student al een stage heeft gekozen
+        if ($student->stage_id) {
+            return back()->with('error', 'Deze student heeft al een stage gekozen.');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Stage $stage)
-    {
-        //
-    }
+        // Stage reserveren
+        $stage->status = 'gereserveerd';
+        $stage->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Stage $stage)
-    {
-        //
-    }
+        // Koppel stage aan student
+        $student->stage_id = $stage->id;
+        $student->save();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Stage $stage)
-    {
-        //
+        return back()->with('success', 'Stage succesvol gekozen, wacht op akkoord van docent.');
     }
 }

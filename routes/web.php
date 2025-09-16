@@ -14,10 +14,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Root: toon de homepage
-Route::get('/', function () {
-    return view('home'); // Zorg dat resources/views/home.blade.php bestaat
-})->name('home');
+// Root: toon de homepage via StageController zodat $stages beschikbaar is
+Route::get('/', [StageController::class, 'index'])->name('home');
 
 // Authenticated dashboard
 Route::get('/dashboard', function () {
@@ -37,5 +35,8 @@ Route::get('/stages', [StageController::class, 'index'])->name('stages.index');
 Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
+
+// Route om stage te kiezen via POST
+Route::post('/stages/{stage}/choose', [StageController::class, 'choose'])->name('stages.choose');
 
 require __DIR__.'/auth.php';

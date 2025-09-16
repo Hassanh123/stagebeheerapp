@@ -2,79 +2,104 @@
 <html lang="nl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stagebeheer App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stagebeheer - Beschikbare Stages</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gradient-to-b from-indigo-50 via-white to-gray-50 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-white shadow">
-        <div class="max-w-6xl mx-auto py-6 px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">Stagebeheer App</h1>
-            <nav class="space-x-4">
-                <a href="/" class="text-gray-600 hover:text-gray-800 font-medium">Home</a>
-                <a href="/dashboard" class="text-gray-600 hover:text-gray-800 font-medium">Dashboard</a>
-            </nav>
-        </div>
-    </header>
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+      <h1 class="text-3xl font-bold tracking-tight">Stagebeheer</h1>
+      <nav class="space-x-6">
+        <a href="{{ route('home') }}" class="hover:underline font-medium">Home</a>
+        <a href="{{ route('dashboard') }}" class="hover:underline font-medium">Dashboard</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-8">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-extrabold mb-6 text-center text-gray-800">Welkom bij Stagebeheer</h2>
-            <p class="text-center mb-12 text-gray-500 text-lg">
-                Gebruik het onderstaande menu om snel toegang te krijgen tot Bedrijven, Stages, Tags, Studenten en Docenten.
-            </p>
+  <!-- Hero Section -->
+  <section class="py-12 bg-indigo-50">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-4xl font-extrabold text-indigo-800 mb-4">Vind jouw perfecte stage!</h2>
+      <p class="text-indigo-600 text-lg">Bekijk alle beschikbare stages en ontdek waar jouw talent het best tot zijn recht komt.</p>
+    </div>
+  </section>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Bedrijven -->
-                <a href="{{ route('companies.index') }}"
-                    class="group block p-8 bg-white rounded-xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold text-xl mb-2 text-blue-700 group-hover:text-blue-800 transition">Bedrijven</h3>
-                    <p class="text-gray-600 text-sm group-hover:text-gray-800 transition">Bekijk en beheer alle bedrijven.</p>
-                </a>
+  <!-- Success / Error Messages -->
+  <div class="max-w-7xl mx-auto px-6 mt-6">
+    @if(session('success'))
+    <div class="mb-6 text-green-800 bg-green-100 p-4 rounded-xl shadow text-center">
+      {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="mb-6 text-red-800 bg-red-100 p-4 rounded-xl shadow text-center">
+      {{ session('error') }}
+    </div>
+    @endif
+  </div>
 
-                <!-- Stages -->
-                <a href="{{ route('stages.index') }}"
-                    class="group block p-8 bg-white rounded-xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold text-xl mb-2 text-green-700 group-hover:text-green-800 transition">Stages</h3>
-                    <p class="text-gray-600 text-sm group-hover:text-gray-800 transition">Bekijk en beheer alle stages.</p>
-                </a>
+  <!-- Stages List -->
+  <main class="flex-1 py-10 px-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+      @forelse($stages as $stage)
+      <div class="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 hover:scale-102 p-6 flex flex-col md:flex-row justify-between items-start gap-6">
+        
+        <!-- Stage Info -->
+        <div class="flex-1">
+          <h3 class="text-2xl font-bold text-indigo-800 mb-2">{{ $stage->titel }}</h3>
+          <p class="text-gray-600 mb-4">{{ $stage->beschrijving }}</p>
 
-                <!-- Tags -->
-                <a href="{{ route('tags.index') }}"
-                    class="group block p-8 bg-white rounded-xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold text-xl mb-2 text-yellow-700 group-hover:text-yellow-800 transition">Tags</h3>
-                    <p class="text-gray-600 text-sm group-hover:text-gray-800 transition">Bekijk en beheer alle tags.</p>
-                </a>
-
-                <!-- Studenten -->
-                <a href="{{ route('students.index') }}"
-                    class="group block p-8 bg-white rounded-xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold text-xl mb-2 text-purple-700 group-hover:text-purple-800 transition">Studenten</h3>
-                    <p class="text-gray-600 text-sm group-hover:text-gray-800 transition">Bekijk en beheer alle studenten.</p>
-                </a>
-
-                <!-- Docenten -->
-                <a href="{{ route('teachers.index') }}"
-                    class="group block p-8 bg-white rounded-xl shadow-md hover:shadow-2xl transition transform hover:-translate-y-1">
-                    <h3 class="font-semibold text-xl mb-2 text-pink-700 group-hover:text-pink-800 transition">Docenten</h3>
-                    <p class="text-gray-600 text-sm group-hover:text-gray-800 transition">Bekijk en beheer alle docenten.</p>
-                </a>
+          <div class="flex flex-col sm:flex-row sm:gap-6 text-gray-700">
+            @if($stage->teacher)
+            <div>
+              <span class="font-medium">Begeleider:</span>
+              <span class="text-sm">{{ $stage->teacher->naam }}</span>
             </div>
-        </div>
-    </main>
+            @endif
 
-    <!-- Footer -->
-    <footer class="bg-white shadow mt-8">
-        <div class="max-w-6xl mx-auto py-4 px-4 text-center text-gray-500 text-sm">
-            &copy; {{ date('Y') }} Stagebeheer App. Alle rechten voorbehouden.
+            @if($stage->company)
+            <div>
+              <span class="font-medium">Bedrijf:</span>
+              <span class="text-sm">{{ $stage->company->naam }}</span>
+            </div>
+            @endif
+          </div>
         </div>
-    </footer>
+
+        <!-- Stage Status / Button -->
+        <div class="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto">
+          @if($stage->status === 'vrij')
+          <form method="POST" action="{{ route('stages.choose', $stage) }}">
+            @csrf
+            <button type="submit" class="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl transition">
+              Meld je aan voor deze stage
+            </button>
+          </form>
+          @else
+          <div class="w-full md:w-auto text-center bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-xl">
+            {{ ucfirst($stage->status) }}
+          </div>
+          @endif
+        </div>
+
+      </div>
+      @empty
+      <p class="text-center text-gray-500">Er zijn momenteel geen stages beschikbaar.</p>
+      @endforelse
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-indigo-600 text-white mt-auto">
+    <div class="max-w-7xl mx-auto py-6 px-6 text-center text-sm">
+      &copy; {{ date('Y') }} Stagebeheer. Alle rechten voorbehouden.
+    </div>
+  </footer>
 
 </body>
-
 </html>
