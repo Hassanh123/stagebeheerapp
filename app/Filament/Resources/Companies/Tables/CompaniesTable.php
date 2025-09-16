@@ -14,43 +14,46 @@ class CompaniesTable
     public static function configure(Table $table): Table
     {
         return $table
-        ->columns([
-        TextColumn::make('id')
-            ->label('ID')
-            ->numeric()
-            ->sortable(),
+            ->columns([
+            
 
-        TextColumn::make('naam')
-            ->label('Bedrijfsnaam')
-            ->searchable(),
+                TextColumn::make('naam')
+                    ->label('Bedrijfsnaam')
+                    ->searchable(),
 
-        TextColumn::make('adres')
-            ->label('Adres')
-            ->searchable(),
+                TextColumn::make('adres')
+                    ->label('Adres')
+                    ->searchable(),
 
-        TextColumn::make('contactpersoon')
-            ->label('Contactpersoon')
-            ->searchable(),
+                TextColumn::make('contactpersoon')
+                    ->label('Contactpersoon')
+                    ->searchable(),
 
-        TextColumn::make('email')
-            ->label('Email')
-            ->searchable(),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
 
-        TextColumn::make('telefoon')
-            ->label('Telefoon')
-            ->searchable(),
+                TextColumn::make('telefoon')
+                    ->label('Telefoon')
+                    ->searchable(),
 
-        TextColumn::make('created_at')
-            ->label('Aangemaakt')
-            ->dateTime()
-            ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                // ✅ Relatie: Company → Stages (aantal stages bij dit bedrijf)
+                TextColumn::make('stages_count')
+                    ->counts('stages')
+                    ->label('Aantal stages')
+                    ->sortable(),
 
-        TextColumn::make('updated_at')
-            ->label('Bijgewerkt')
-            ->dateTime()
-            ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('created_at')
+                    ->label('Aangemaakt')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('updated_at')
+                    ->label('Bijgewerkt')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
