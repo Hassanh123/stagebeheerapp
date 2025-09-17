@@ -11,14 +11,13 @@ class StageController extends Controller
     /**
      * Toon alle beschikbare stages op de homepage
      */
-  public function index()
-{
-    // Haal alle stages op met tags, teacher en company
-    $stages = Stage::with(['tags', 'teacher', 'company'])->get();
+    public function index()
+    {
+        // Haal alle stages op met tags, teacher en company
+        $stages = Stage::with(['tags', 'teacher', 'company'])->get();
 
-    return view('home', compact('stages'));
-}
-
+        return view('home', compact('stages'));
+    }
 
     /**
      * Laat een student een stage kiezen
@@ -49,5 +48,15 @@ class StageController extends Controller
         $student->save();
 
         return back()->with('success', 'Stage succesvol gekozen, wacht op akkoord van docent.');
+    }
+
+    /**
+     * Toon de keuze van een student (inclusief gekoppelde docent en bedrijf)
+     */
+    public function mijnKeuze(Student $student)
+    {
+        $student->load('stage.teacher', 'stage.company');
+
+        return view('mijn-keuze', compact('student'));
     }
 }
