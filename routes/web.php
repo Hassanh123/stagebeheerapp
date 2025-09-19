@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Homepage met alle stages en bedrijven
 Route::get('/', [StageController::class, 'index'])->name('home');
 
-// Dashboard (authenticatie vereist)
+// Dashboard voor normale gebruikers (authenticatie vereist)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

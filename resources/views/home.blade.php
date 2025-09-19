@@ -10,16 +10,23 @@
 
 <body class="bg-gradient-to-b from-indigo-50 via-white to-gray-50 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white shadow">
-        <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-            <h1 class="text-3xl font-bold tracking-tight">StageZoeker</h1>
-            <nav class="space-x-6">
-                <a href="{{ route('home') }}" class="hover:underline font-medium">Home</a>
-                <a href="/admin" class="hover:underline font-medium">Dashboard</a>
-            </nav>
-        </div>
-    </header>
+<!-- Header -->
+<header class="bg-indigo-600 text-white shadow-md">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-4">
+      <!-- Logo: Zorg dat je logo wit of transparant is -->
+      <img src="{{ asset('build/assets/stagebeheer.png') }}" alt="StageZoeker Logo" class="h-12 w-auto rounded-md bg-white p-1">
+
+      <!-- Titel -->
+      <h1 class="text-3xl font-bold tracking-tight drop-shadow-md">StageZoeker</h1>
+    </div>
+    <nav class="space-x-6">
+      <a href="{{ route('home') }}" class="hover:underline hover:text-gray-200 font-medium transition">Home</a>
+      <a href="/admin" class="hover:underline hover:text-gray-200 font-medium transition">Dashboard</a>
+    </nav>
+  </div>
+</header>
+
 
     <!-- Hero Section -->
     <section class="py-12 bg-indigo-50">
