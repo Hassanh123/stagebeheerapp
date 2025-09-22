@@ -16,12 +16,24 @@ class StagesTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')->label('Stage ID')->sortable(),
-                TextColumn::make('titel')->label('Titel')->searchable(),
-                TextColumn::make('status')->label('Status')->sortable(),
-                TextColumn::make('company.naam')->label('Bedrijf')->searchable(),
-                TextColumn::make('teacher.naam')->label('Begeleider')->searchable(),
-                TagsColumn::make('tags')->label('Tags')->getStateUsing(fn($record) => $record->tags->pluck('naam')),
+                TextColumn::make('id')
+                    ->label('Stage ID')
+                    ->sortable(),
+                TextColumn::make('titel')
+                    ->label('Titel')
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->sortable(),
+                TextColumn::make('company.naam')
+                    ->label('Bedrijf')
+                    ->sortable(),
+                TextColumn::make('teacher.naam')
+                    ->label('Begeleider')
+                    ->sortable(),
+                TagsColumn::make('tags')
+                    ->label('Tags')
+                    ->separator(', ')
+                    ->getStateUsing(fn ($record) => $record->tags->pluck('naam')->toArray()),
             ])
             ->recordActions([
                 ViewAction::make(),

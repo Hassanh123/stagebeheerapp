@@ -28,7 +28,7 @@ class StageSeeder extends Seeder
         $stages = [
             ['titel' => 'Introductie Programmeren', 'beschrijving' => 'Leer de basis van programmeren in verschillende talen.', 'status' => 'vrij'],
             ['titel' => 'Webontwikkeling', 'beschrijving' => 'Maak je eerste webapplicatie met HTML, CSS en JavaScript.', 'status' => 'vrij'],
-            ['titel' => 'Databases en SQL', 'beschrijving' => 'Leer hoe je databases ontwerpt en queries schrijft.', 'status' => 'vrij'],
+            ['titel' => 'Databases en SQL', 'beschrijving' => 'Leer hoe je databases ontwerpt en queries schrijft.', 'status' => 'Bezet'],
             ['titel' => 'C# Applicaties', 'beschrijving' => 'Ontwikkel C# desktop applicaties.', 'status' => 'vrij'],
             ['titel' => 'JavaScript Frameworks', 'beschrijving' => 'Leer werken met moderne JS frameworks zoals Vue of React.', 'status' => 'vrij'],
             ['titel' => 'Mobile Development', 'beschrijving' => 'Bouw mobiele apps voor Android en iOS.', 'status' => 'vrij'],
