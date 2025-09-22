@@ -15,8 +15,6 @@ class CompaniesTable
     {
         return $table
             ->columns([
-            
-
                 TextColumn::make('naam')
                     ->label('Bedrijfsnaam')
                     ->searchable(),
@@ -35,6 +33,11 @@ class CompaniesTable
 
                 TextColumn::make('telefoon')
                     ->label('Telefoon')
+                    ->searchable(),
+
+                TextColumn::make('beschrijving')
+                    ->label('Beschrijving')
+                    ->limit(50) // toont max 50 tekens
                     ->searchable(),
 
                 // ✅ Relatie: Company → Stages (aantal stages bij dit bedrijf)

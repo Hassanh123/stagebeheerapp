@@ -11,14 +11,27 @@ class CompanyInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('naam'),
-                TextEntry::make('adres'),
-                TextEntry::make('contactpersoon'),
+                TextEntry::make('naam')
+                    ->label('Bedrijfsnaam'),
+
+                TextEntry::make('adres')
+                    ->label('Adres'),
+
+                TextEntry::make('contactpersoon')
+                    ->label('Contactpersoon'),
+
                 TextEntry::make('email')
                     ->label('Email address'),
+
+                TextEntry::make('beschrijving')
+                    ->label('Beschrijving'),
+
                 TextEntry::make('created_at')
+                    ->label('Aangemaakt op')
                     ->dateTime(),
+
                 TextEntry::make('updated_at')
+                    ->label('Laatst bijgewerkt')
                     ->dateTime(),
             ]);
     }
