@@ -3,14 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Student;
 use App\Models\Stage;
+use Illuminate\Support\Facades\Hash;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get all stage IDs
         $stageIds = Stage::pluck('id')->toArray();
 
         $students = [
@@ -26,7 +27,6 @@ class StudentSeeder extends Seeder
             ['naam' => 'Fatima Zahra', 'email' => 'fatima.zahra@example.com'],
         ];
 
-        // Generate additional students to reach 50
         for ($i = 11; $i <= 50; $i++) {
             $students[] = [
                 'naam' => 'Student ' . $i,
@@ -35,28 +35,30 @@ class StudentSeeder extends Seeder
         }
 
         foreach ($students as $index => $student) {
+            // ✅ Maak of update de user
+            $user = User::updateOrCreate(
+                ['email' => $student['email']],
+                [
+                    'naam' => $student['naam'],
+                    'role' => 'student',
+                    'password' => Hash::make('password123'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
 
-            // Maak eerst een user aan voor deze student
-            $userId = DB::table('users')->insertGetId([
-                'naam' => $student['naam'],    // <-- hier 'name' gebruiken
-                'email' => $student['email'],
-                'role' => 'student',
-                'password' => bcrypt('password123'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            // Voeg vervolgens de student toe met user_id
-            DB::table('students')->insert([
-                'user_id' => $userId,
-                'naam' => $student['naam'],
-                'email' => $student['email'],
-                'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
-                'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
-                'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // ✅ Maak of update de student
+            Student::updateOrCreate(
+                ['email' => $student['email']],
+                [
+                    'naam' => $student['naam'],
+                    'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
+                    'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
+                    'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 }
