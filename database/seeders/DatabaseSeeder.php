@@ -11,15 +11,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Eventueel een test user met factory (optioneel)
+        // Eventueel test users met factory
         // \App\Models\User::factory(10)->create();
 
-        // Call jouw AdminUserSeeder
+        // Basis seeders
         $this->call(AdminUserSeeder::class);
         $this->call(TagSeeder::class);
-         $this->call(CompanySeeder::class);
-          $this->call(TeacherSeeder::class);
-          $this->call(StageSeeder::class);
-          $this->call(StudentSeeder::class);
+        $this->call(CompanySeeder::class);
+        $this->call(TeacherSeeder::class);
+        $this->call(StageSeeder::class);
+        $this->call(StudentSeeder::class);
+
+        // Seeders die afhankelijk zijn van studenten/stages
+        $this->call(CoursesTableSeeder::class);
+        $this->call(NotificationsTableSeeder::class);
     }
 }

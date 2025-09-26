@@ -34,9 +34,21 @@ class StudentSeeder extends Seeder
             ];
         }
 
-        // Insert all students
         foreach ($students as $index => $student) {
+
+            // Maak eerst een user aan voor deze student
+            $userId = DB::table('users')->insertGetId([
+                'naam' => $student['naam'],    // <-- hier 'name' gebruiken
+                'email' => $student['email'],
+                'role' => 'student',
+                'password' => bcrypt('password123'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Voeg vervolgens de student toe met user_id
             DB::table('students')->insert([
+                'user_id' => $userId,
                 'naam' => $student['naam'],
                 'email' => $student['email'],
                 'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
