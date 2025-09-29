@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Stages\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\MultiSelect;
 use Filament\Schemas\Schema;
 
 class StageForm
@@ -25,25 +24,23 @@ class StageForm
                     ->label('Beschrijving'),
 
                 Select::make('company_id')
-                    ->relationship('company', 'naam')
+                    ->relationship(name: 'company', titleAttribute: 'naam')
                     ->required()
                     ->label('Bedrijf'),
 
-                Select::make('student_id')
-                    ->relationship('students', 'naam')
-                    ->nullable()
-                    ->helperText('Wordt automatisch gezet wanneer een student kiest')
-                    ->label('Student'),
-
                 Select::make('teacher_id')
-                    ->relationship('teacher', 'naam')
+                    ->relationship(name: 'teacher', titleAttribute: 'naam')
                     ->nullable()
                     ->label('Begeleider'),
 
+                // Tags: belongsToMany -> gebruik relationship() + multiple()
                 Select::make('tags')
-                    ->multiple() // laat meerdere selecties toe
-                    ->relationship('tags', 'naam') // 'tags' verwijst naar de methode in Stage-model
-                    ->label('Tags'),
+                    ->label('Tags')
+                    ->relationship(name: 'tags', titleAttribute: 'naam')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->columnSpanFull(),
 
                 Select::make('status')
                     ->options([

@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('companies', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
             $table->id(); // Primary key
             $table->string('naam');
             $table->string('adres');
             $table->string('contactpersoon');
             $table->string('email')->unique();
-          $table->string('telefoon'); // standaard NOT NULL
+            $table->string('telefoon'); // standaard NOT NULL
+            $table->text('beschrijving')->nullable(); // ✅ korte beschrijving
             $table->timestamps(); // created_at & updated_at
         });
     }
