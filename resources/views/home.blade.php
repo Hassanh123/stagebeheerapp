@@ -122,6 +122,7 @@ if ($student && $student->stage_id) {
                             </span>
                         @endif
                     @else
+                        {{-- Voor gasten --}}
                         <span class="px-6 py-2 rounded-xl font-semibold 
                             @if($stage->status === 'vrij') bg-blue-200 text-blue-800 
                             @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
@@ -129,7 +130,13 @@ if ($student && $student->stage_id) {
                             @elseif($stage->status === 'afgekeurd') bg-red-200 text-red-800 @endif">
                             {{ ucfirst(str_replace('_',' ', $stage->status)) }}
                         </span>
-                        <p class="mt-1 text-sm text-gray-500">Login om deze stage te kiezen</p>
+                        <p class="mt-1 text-sm text-gray-500">
+                            @if($stage->status === 'vrij')
+                                Login om deze stage te kiezen
+                            @else
+                                Stage is bezet
+                            @endif
+                        </p>
                     @endauth
                 </div>
             </div>
