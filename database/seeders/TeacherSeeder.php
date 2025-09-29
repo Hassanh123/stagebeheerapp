@@ -29,7 +29,7 @@ class TeacherSeeder extends Seeder
             $user = User::updateOrCreate(
                 ['email' => $teacher['email']],
                 [
-                    'naam' => $teacher['naam'],
+                    'name' => $teacher['naam'],
                     'role' => 'teacher',
                     'password' => Hash::make('Teacher123'),
                     'created_at' => now(),

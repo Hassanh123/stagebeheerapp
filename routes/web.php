@@ -17,30 +17,32 @@ use Illuminate\Support\Facades\Route;
 // Homepage met alle stages en bedrijven
 Route::get('/', [StageController::class, 'index'])->name('home');
 
-// Dashboard voor normale gebruikers (authenticatie vereist)
+// Dashboard voor ingelogde gebruikers
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profiel routes (authenticatie vereist)
+// Profiel routes (alleen ingelogd)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Stage kiezen (alleen studenten die ingelogd zijn)
+    Route::post('/stages/{stage}/choose', [StageController::class, 'choose'])
+        ->name('stages.choose');
+
+    // Mijn keuze bekijken (auth vereist)
+    Route::get('/mijn-keuze', [StageController::class, 'mijnKeuze'])
+        ->name('mijn-keuze');
 });
 
-// Resource routes (index only)
+// Resource routes (alleen index)
 Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
 Route::get('/stages', [StageController::class, 'index'])->name('stages.index');
 Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
-
-// Stage kiezen (zonder login: student_id via POST)
-Route::post('/stages/{stage}/choose', [StageController::class, 'choose'])->name('stages.choose');
-
-// "Mijn keuze" bekijken via student_id (optioneel zonder login)
-Route::get('/mijn-keuze/{student}', [StageController::class, 'mijnKeuze'])->name('mijn-keuze');
 
 // Laravel auth routes
 require __DIR__.'/auth.php';

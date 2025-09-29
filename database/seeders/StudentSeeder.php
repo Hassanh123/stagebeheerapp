@@ -14,49 +14,56 @@ class StudentSeeder extends Seeder
     {
         $stageIds = Stage::pluck('id')->toArray();
 
-        $students = [
-            ['naam' => 'Jan Jansen', 'email' => 'jan.jansen@example.com'],
-            ['naam' => 'Lisa de Vries', 'email' => 'lisa.devries@example.com'],
-            ['naam' => 'Mohammed Ali', 'email' => 'mohammed.ali@example.com'],
-            ['naam' => 'Sofia González', 'email' => 'sofia.gonzalez@example.com'],
-            ['naam' => 'Ethan Chen', 'email' => 'ethan.chen@example.com'],
-            ['naam' => 'Amina Hassan', 'email' => 'amina.hassan@example.com'],
-            ['naam' => 'David O’Connor', 'email' => 'david.oconnor@example.com'],
-            ['naam' => 'Yuki Tanaka', 'email' => 'yuki.tanaka@example.com'],
-            ['naam' => 'Carlos Ramirez', 'email' => 'carlos.ramirez@example.com'],
-            ['naam' => 'Fatima Zahra', 'email' => 'fatima.zahra@example.com'],
+        $firstNames = [
+            'James','Mary','John','Patricia','Robert','Jennifer','Michael','Linda',
+            'William','Elizabeth','David','Barbara','Richard','Susan','Joseph','Jessica',
+            'Thomas','Sarah','Charles','Karen','Christopher','Nancy','Daniel','Lisa',
+            'Matthew','Betty','Anthony','Margaret','Mark','Sandra','Donald','Ashley',
+            'Steven','Kimberly','Paul','Emily','Andrew','Donna','Joshua','Michelle',
+            'Kenneth','Dorothy','Kevin','Carol','Brian','Amanda','George','Melissa','Edward','Deborah'
         ];
 
-        for ($i = 11; $i <= 50; $i++) {
+        $lastNames = [
+            'Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis',
+            'Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas',
+            'Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez',
+            'Clark','Ramirez','Lewis','Robinson','Walker','Young','Allen','King','Wright','Scott',
+            'Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera',
+            'Campbell','Mitchell','Carter','Roberts'
+        ];
+
+        $students = [];
+
+        for ($i = 1; $i <= 50; $i++) {
+            $first = $firstNames[array_rand($firstNames)];
+            $last = $lastNames[array_rand($lastNames)];
+
             $students[] = [
-                'naam' => 'Student ' . $i,
-                'email' => 'student' . $i . '@example.com',
+                'naam' => "$first $last",
+                'email' => strtolower("$first.$last$i@example.com"), // uniek
             ];
         }
 
-        foreach ($students as $index => $student) {
-            // ✅ Maak of update de user
+        foreach ($students as $index => $studentData) {
+            // Maak of update de gebruiker
             $user = User::updateOrCreate(
-                ['email' => $student['email']],
+                ['email' => $studentData['email']],
                 [
-                    'naam' => $student['naam'],
+                    'name' => $studentData['naam'],
                     'role' => 'student',
-                    'password' => Hash::make('password123'),
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'password' => Hash::make('password'),
                 ]
             );
 
-            // ✅ Maak of update de student
+            // Maak of update de student en koppel aan user
             Student::updateOrCreate(
-                ['email' => $student['email']],
+                ['email' => $studentData['email']],
                 [
-                    'naam' => $student['naam'],
+                    'user_id' => $user->id,
+                    'naam' => $studentData['naam'],
                     'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
                     'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
                     'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]
             );
         }

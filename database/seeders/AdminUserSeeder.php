@@ -13,7 +13,7 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@stagebeheer.local'], // uniek veld
             [
-                'naam' => 'admin',
+                'name' => 'admin',
                 'role' => 'admin', // rol declareren
                 'password' => Hash::make('Admin123'), // standaard wachtwoord
             ]
