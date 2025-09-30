@@ -3,48 +3,69 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Student;
 use App\Models\Stage;
+use Illuminate\Support\Facades\Hash;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get all stage IDs
         $stageIds = Stage::pluck('id')->toArray();
 
-        $students = [
-            ['naam' => 'Jan Jansen', 'email' => 'jan.jansen@example.com'],
-            ['naam' => 'Lisa de Vries', 'email' => 'lisa.devries@example.com'],
-            ['naam' => 'Mohammed Ali', 'email' => 'mohammed.ali@example.com'],
-            ['naam' => 'Sofia González', 'email' => 'sofia.gonzalez@example.com'],
-            ['naam' => 'Ethan Chen', 'email' => 'ethan.chen@example.com'],
-            ['naam' => 'Amina Hassan', 'email' => 'amina.hassan@example.com'],
-            ['naam' => 'David O’Connor', 'email' => 'david.oconnor@example.com'],
-            ['naam' => 'Yuki Tanaka', 'email' => 'yuki.tanaka@example.com'],
-            ['naam' => 'Carlos Ramirez', 'email' => 'carlos.ramirez@example.com'],
-            ['naam' => 'Fatima Zahra', 'email' => 'fatima.zahra@example.com'],
+        $firstNames = [
+            'James','Mary','John','Patricia','Robert','Jennifer','Michael','Linda',
+            'William','Elizabeth','David','Barbara','Richard','Susan','Joseph','Jessica',
+            'Thomas','Sarah','Charles','Karen','Christopher','Nancy','Daniel','Lisa',
+            'Matthew','Betty','Anthony','Margaret','Mark','Sandra','Donald','Ashley',
+            'Steven','Kimberly','Paul','Emily','Andrew','Donna','Joshua','Michelle',
+            'Kenneth','Dorothy','Kevin','Carol','Brian','Amanda','George','Melissa','Edward','Deborah'
         ];
 
-        // Generate additional students to reach 50
-        for ($i = 11; $i <= 50; $i++) {
+        $lastNames = [
+            'Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis',
+            'Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas',
+            'Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez',
+            'Clark','Ramirez','Lewis','Robinson','Walker','Young','Allen','King','Wright','Scott',
+            'Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera',
+            'Campbell','Mitchell','Carter','Roberts'
+        ];
+
+        $students = [];
+
+        for ($i = 1; $i <= 50; $i++) {
+            $first = $firstNames[array_rand($firstNames)];
+            $last = $lastNames[array_rand($lastNames)];
+
             $students[] = [
-                'naam' => 'Student ' . $i,
-                'email' => 'student' . $i . '@example.com',
+                'naam' => "$first $last",
+                'email' => strtolower("$first.$last$i@example.com"), // uniek
             ];
         }
 
-        // Insert all students
-        foreach ($students as $index => $student) {
-            DB::table('students')->insert([
-                'naam' => $student['naam'],
-                'email' => $student['email'],
-                'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
-                'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
-                'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        foreach ($students as $index => $studentData) {
+            // Maak of update de gebruiker
+            $user = User::updateOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'name' => $studentData['naam'],
+                    'role' => 'student',
+                    'password' => Hash::make('password'),
+                ]
+            );
+
+            // Maak of update de student en koppel aan user
+            Student::updateOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'user_id' => $user->id,
+                    'naam' => $studentData['naam'],
+                    'student_number' => 'S' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
+                    'photo_url' => 'https://i.pravatar.cc/150?img=' . rand(1, 70),
+                    'stage_id' => !empty($stageIds) ? $stageIds[array_rand($stageIds)] : null,
+                ]
+            );
         }
     }
 }

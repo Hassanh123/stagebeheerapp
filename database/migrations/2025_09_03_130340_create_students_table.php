@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ✅ link naar user
             $table->string('naam');
             $table->string('email')->unique();
             $table->string('student_number')->unique();
@@ -23,5 +24,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('students');
     }
-    
 };

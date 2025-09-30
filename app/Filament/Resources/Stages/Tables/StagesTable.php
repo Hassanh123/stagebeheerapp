@@ -15,38 +15,33 @@ class StagesTable
     {
         return $table
             ->columns([
-
                 TextColumn::make('id')
                     ->label('Stage ID')
                     ->sortable(),
+
                 TextColumn::make('titel')
                     ->label('Titel')
                     ->searchable(),
+
                 TextColumn::make('status')
+                    ->label('Status')
                     ->sortable(),
+
                 TextColumn::make('company.naam')
                     ->label('Bedrijf')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
+
                 TextColumn::make('teacher.naam')
                     ->label('Begeleider')
-                    ->sortable(),
-                TagsColumn::make('tags')
-                    ->label('Tags')
-                    ->separator(', ')
-                    ->getStateUsing(fn ($record) => $record->tags->pluck('naam')->toArray()),
+                    ->sortable()
+                    ->searchable(),
 
-                TextColumn::make('titel')->label('Titel')->searchable(),
-                TextColumn::make('status')->label('Status')->sortable(),
-                TextColumn::make('company.naam')->label('Bedrijf')->searchable(),
-                TextColumn::make('teacher.naam')->label('Begeleider')->searchable(),
-
-                // Gebruik TextColumn i.p.v. de deprecated TagsColumn.
-                // ->badge() rendert elk tag-item als een badge (werkt ook voor belongsToMany).
+                // Tags als badges tonen (werkt bij belongsToMany)
                 TextColumn::make('tags.naam')
                     ->label('Tags')
                     ->badge()
                     ->wrap(),
-
             ])
             ->recordActions([
                 ViewAction::make(),

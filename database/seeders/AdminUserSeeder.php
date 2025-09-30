@@ -8,16 +8,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@stagebeheer.local'], // uniek veld
             [
                 'name' => 'admin',
-                'password' => Hash::make('Admin123'), // wachtwoord versleuteld
+                'role' => 'admin', // rol declareren
+                'password' => Hash::make('Admin123'), // standaard wachtwoord
             ]
         );
     }

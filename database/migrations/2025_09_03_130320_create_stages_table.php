@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stages', function (Blueprint $table) {
-    $table->id();
-    $table->string('titel');
-    $table->text('beschrijving');
-    $table->enum('status', ['vrij', 'gekozen', 'akkoord', 'niet_akkoord'])->default('vrij');
-    $table->foreignId('company_id')->constrained('companies'); // <- correct
-    $table->foreignId('teacher_id')->constrained('teachers');
-    $table->timestamps();
-});
-
+            $table->id();
+            $table->string('titel');
+            $table->text('beschrijving')->nullable();
+            $table->enum('status', ['vrij', 'in_behandeling', 'goedgekeurd', 'afgekeurd'])->default('vrij');
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
+            $table->foreignId('teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
+            $table->timestamps();
+        });
     }
 
     /**
