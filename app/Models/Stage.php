@@ -41,4 +41,10 @@ class Stage extends Model
     {
         return $this->belongsToMany(Tag::class, 'stage_tag', 'stage_id', 'tag_id');
     }
+
+    // Stage has many courses
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class);
+    }
 }

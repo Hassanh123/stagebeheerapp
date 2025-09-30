@@ -12,6 +12,11 @@ return new class extends Migration
             $table->id('course_id');
             $table->string('naam');
             $table->string('beschrijving')->nullable();
+
+            // stage_id kan nu leeg zijn
+            $table->unsignedBigInteger('stage_id')->nullable();
+            $table->foreign('stage_id')->references('id')->on('stages')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

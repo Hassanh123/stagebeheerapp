@@ -25,7 +25,7 @@ class TeacherSeeder extends Seeder
         ];
 
         foreach ($teachers as $teacher) {
-            // ✅ Maak de user aan of update als hij al bestaat
+            // ✅ Maak of update de user
             $user = User::updateOrCreate(
                 ['email' => $teacher['email']],
                 [
@@ -37,11 +37,12 @@ class TeacherSeeder extends Seeder
                 ]
             );
 
-            // ✅ Voeg teacher toe in de teachers tabel, zonder duplicaten
+            // ✅ Maak of update de teacher, inclusief user_id
             Teacher::updateOrCreate(
                 ['email' => $teacher['email']],
                 [
                     'naam' => $teacher['naam'],
+                    'user_id' => $user->id, // 👈 koppeling met user
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]

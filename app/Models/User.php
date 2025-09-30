@@ -35,4 +35,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+
+    // 🔑 Relatie naar Teacher
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
 }
