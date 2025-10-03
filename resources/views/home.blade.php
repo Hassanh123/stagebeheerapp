@@ -60,13 +60,10 @@ if ($student && $student->stage_id) {
             <strong>Inloggen als student</strong> is vereist om te solliciteren.
         </p>
 
-        <!-- Call-to-Action Knoppen -->
-        <div class="flex flex-col sm:flex-row justify-center gap-3 mb-3">
-            <a href="/stages" class="px-5 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
-                Bekijk stages
-            </a>
-            <a href="/account/login" class="px-5 py-3 border border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition">
-                Inloggen
+        <!-- Call-to-Action knop naar dashboard -->
+        <div class="flex justify-center mb-3">
+            <a href="{{ route('dashboard') }}" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
+                Ga naar Dashboard
             </a>
         </div>
 
@@ -76,6 +73,7 @@ if ($student && $student->stage_id) {
         </p>
     </div>
 </section>
+
 
 <!-- Flash messages -->
 <div class="max-w-7xl mx-auto px-4 mt-4">
