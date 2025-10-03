@@ -76,6 +76,27 @@ if ($student && $student->stage_id) {
     <div class="max-w-7xl mx-auto space-y-6">
         <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 border-b-2 border-indigo-300 pb-2">Beschikbare Stages</h2>
 
+        <!-- 🔹 Filter formulier (auto-submit) -->
+        <form method="GET" action="{{ route('home') }}" class="mb-6 flex flex-col md:flex-row items-center gap-4">
+            <div class="flex items-center gap-2">
+                <label for="tag" class="text-gray-700 font-medium">Filter op tag:</label>
+                <select name="tag" id="tag" 
+                        class="rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        onchange="this.form.submit()">
+                    <option value="">-- Alle tags --</option>
+                    @foreach($tags as $tag)
+                        <option value="{{ $tag->naam }}" {{ request('tag') === $tag->naam ? 'selected' : '' }}>
+                            {{ $tag->naam }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            @if(request('tag'))
+                <a href="{{ route('home') }}" class="text-indigo-600 hover:underline">Reset filter</a>
+            @endif
+        </form>
+
+        <!-- 🔹 Stage cards -->
         @forelse($stages as $stage)
             <div class="bg-white rounded-3xl shadow-lg p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center hover:shadow-xl transition">
 

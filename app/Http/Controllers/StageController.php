@@ -5,36 +5,48 @@ namespace App\Http\Controllers;
 use App\Models\Stage;
 use App\Models\Student;
 use App\Models\Company;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StageController extends Controller
 {
-    /**
-     * Toon alle beschikbare stages en eventueel de keuze van de ingelogde student
-     */
-    public function index()
-    {
-        $stages = Stage::with(['company', 'teacher', 'tags'])->get();
+   public function index(Request $request)
+{
+    $query = Stage::with(['company', 'teacher', 'tags']);
 
-        $student = Auth::check() && Auth::user()->role === 'student'
-            ? Auth::user()->student
-            : null;
-
-        $mijnKeuze = null;
-
-        if ($student && $student->stage_id) {
-            $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
-
-            if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
-                $mijnKeuze = $stage;
-            }
-        }
-
-        $companies = Company::all();
-
-        return view('home', compact('stages', 'companies', 'mijnKeuze'));
+    // Filter op tag (indien meegegeven in de URL)
+    if ($request->filled('tag')) {
+        $query->whereHas('tags', function ($q) use ($request) {
+            $q->where('naam', $request->tag);
+        });
     }
+
+    $stages = $query->get();
+
+    $student = Auth::check() && Auth::user()->role === 'student'
+        ? Auth::user()->student
+        : null;
+
+    $mijnKeuze = null;
+
+    if ($student && $student->stage_id) {
+        $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
+
+        if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
+            $mijnKeuze = $stage;
+        }
+    }
+
+    // Alle beschikbare tags voor de filter dropdown
+    $tags = Tag::all();
+
+    // Alle bedrijven (voor bijv. home weergave)
+    $companies = Company::all();
+
+    // 👉 Gebruik de home view
+    return view('home', compact('stages', 'companies', 'mijnKeuze', 'tags'));
+}
 
     /**
      * Laat een ingelogde student een stage kiezen
