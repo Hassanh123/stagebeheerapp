@@ -1,5 +1,6 @@
 @php
 use Illuminate\Support\Str;
+use App\Models\Stage; // <-- dit is cruciaal
 
 $student = auth()->user()?->student;
 $mijnKeuze = null;
