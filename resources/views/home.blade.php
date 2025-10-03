@@ -5,7 +5,7 @@ $student = auth()->user()?->student;
 $mijnKeuze = null;
 
 if ($student && $student->stage_id) {
-    $stage = \App\Models\Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
+    $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
     if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
         $mijnKeuze = $stage;
     }
@@ -45,42 +45,58 @@ if ($student && $student->stage_id) {
     </div>
 </header>
 
-<!-- Hero -->
-<section class="py-12 bg-indigo-50 border-b border-indigo-200">
-    <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-4xl font-extrabold text-indigo-800 mb-4">Vind jouw perfecte stage!</h2>
-        <p class="text-indigo-600 text-lg mb-6">
-            Bekijk hieronder alle beschikbare stages en hun status. Om een stage te kiezen, moet je <strong>ingelogd</strong> zijn als student.
+<!-- Hero Section -->
+<section class="relative py-16 bg-gradient-to-b from-indigo-50 to-white border-b border-indigo-200">
+    <div class="max-w-3xl mx-auto text-center px-4">
+        <!-- Titel -->
+        <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-900 mb-3 leading-snug">
+            Ontdek jouw ideale stageplek
+        </h1>
+
+        <!-- Beschrijving -->
+        <p class="text-indigo-700 text-base md:text-lg mb-5">
+            Vind eenvoudig beschikbare stages bij topbedrijven en onderwijsinstellingen.<br>
+            Controleer de status van elke stage en solliciteer direct.<br>
+            <strong>Inloggen als student</strong> is vereist om te solliciteren.
         </p>
-        @guest
-            <div class="space-x-4">
-                <a href="{{ route('login') }}" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:bg-indigo-700">Inloggen</a>
-                <a href="{{ route('register') }}" class="bg-white text-indigo-600 px-6 py-3 rounded-xl font-semibold border border-indigo-600 shadow hover:bg-indigo-50">Registreren</a>
-            </div>
-        @endguest
+
+        <!-- Call-to-Action Knoppen -->
+        <div class="flex flex-col sm:flex-row justify-center gap-3 mb-3">
+            <a href="/stages" class="px-5 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
+                Bekijk stages
+            </a>
+            <a href="/account/login" class="px-5 py-3 border border-indigo-600 text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition">
+                Inloggen
+            </a>
+        </div>
+
+        <!-- Extra info -->
+        <p class="text-indigo-500 text-sm">
+            Alle stages zijn gecontroleerd en up-to-date. Mis geen kans op jouw volgende leerervaring!
+        </p>
     </div>
 </section>
 
 <!-- Flash messages -->
-<div class="max-w-7xl mx-auto px-6 mt-6">
+<div class="max-w-7xl mx-auto px-4 mt-4">
     @if(session('success'))
-        <div class="mb-6 text-green-800 bg-green-100 p-4 rounded-xl shadow text-center">{{ session('success') }}</div>
+        <div class="mb-4 text-green-800 bg-green-100 p-3 rounded-xl shadow text-center">{{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="mb-6 text-red-800 bg-red-100 p-4 rounded-xl shadow text-center">{{ session('error') }}</div>
+        <div class="mb-4 text-red-800 bg-red-100 p-3 rounded-xl shadow text-center">{{ session('error') }}</div>
     @endif
 </div>
 
-<!-- Beschikbare Stages -->
-<main class="flex-1 py-10 px-6">
-    <div class="max-w-7xl mx-auto space-y-6">
-        <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 border-b-2 border-indigo-300 pb-2">Beschikbare Stages</h2>
+<!-- Main Content -->
+<main class="flex-1 py-8 px-4">
+    <div class="max-w-7xl mx-auto space-y-5">
+        <h2 class="text-3xl font-extrabold text-indigo-800 mb-4 border-b-2 border-indigo-300 pb-2">Beschikbare Stages</h2>
 
-        <!-- 🔹 Filter formulier (auto-submit) -->
-        <form method="GET" action="{{ route('home') }}" class="mb-6 flex flex-col md:flex-row items-center gap-4">
+        <!-- Filter formulier -->
+        <form method="GET" action="{{ route('home') }}" class="mb-4 flex flex-col md:flex-row items-center gap-3">
             <div class="flex items-center gap-2">
                 <label for="tag" class="text-gray-700 font-medium">Filter op tag:</label>
-                <select name="tag" id="tag" 
+                <select name="tag" id="tag"
                         class="rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                         onchange="this.form.submit()">
                     <option value="">-- Alle tags --</option>
@@ -96,15 +112,15 @@ if ($student && $student->stage_id) {
             @endif
         </form>
 
-        <!-- 🔹 Stage cards -->
+        <!-- Stage cards -->
         @forelse($stages as $stage)
-            <div class="bg-white rounded-3xl shadow-lg p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center hover:shadow-xl transition">
+            <div class="bg-white rounded-3xl shadow-lg p-5 grid grid-cols-1 md:grid-cols-3 gap-5 items-center hover:shadow-xl transition">
 
                 <!-- Info links -->
-                <div class="md:col-span-2 space-y-2">
+                <div class="md:col-span-2 space-y-1">
                     <h3 class="text-2xl font-bold text-indigo-800">{{ $stage->titel }}</h3>
                     <p class="text-gray-600">{{ $stage->beschrijving ?? 'Geen beschrijving beschikbaar' }}</p>
-                    <div class="flex flex-wrap gap-4 text-gray-700 mt-2">
+                    <div class="flex flex-wrap gap-3 text-gray-700 mt-1">
                         <div><span class="font-medium">Bedrijf:</span> {{ $stage->company->naam ?? 'Onbekend' }}</div>
                         <div><span class="font-medium">Begeleider:</span> {{ $stage->teacher->naam ?? 'Nog niet gekoppeld' }}</div>
                         @if($stage->tags && count($stage->tags))
@@ -120,12 +136,14 @@ if ($student && $student->stage_id) {
                             @if(!$mijnKeuze && $stage->status === 'vrij')
                                 <form action="{{ route('stages.choose', $stage->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="bg-green-200 text-green-800 font-semibold py-2 px-6 rounded-xl hover:bg-green-300 transition">
+                                    <button type="submit" 
+                                            class="bg-green-200 text-green-800 font-semibold py-2 px-5 rounded-xl hover:bg-green-300 transition"
+                                            onclick="this.form.submit(); this.disabled=true;">
                                         Kies deze stage
                                     </button>
                                 </form>
                             @else
-                                <span class="px-6 py-2 rounded-xl font-semibold 
+                                <span class="px-5 py-2 rounded-xl font-semibold 
                                     @if($stage->status === 'vrij') bg-blue-200 text-blue-800 
                                     @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
                                     @elseif($stage->status === 'goedgekeurd') bg-green-200 text-green-800 
@@ -134,7 +152,7 @@ if ($student && $student->stage_id) {
                                 </span>
                             @endif
                         @else
-                            <span class="px-6 py-2 rounded-xl font-semibold 
+                            <span class="px-5 py-2 rounded-xl font-semibold 
                                 @if($stage->status === 'vrij') bg-blue-200 text-blue-800 
                                 @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
                                 @elseif($stage->status === 'goedgekeurd') bg-green-200 text-green-800 
@@ -143,7 +161,7 @@ if ($student && $student->stage_id) {
                             </span>
                         @endif
                     @else
-                        <span class="px-6 py-2 rounded-xl font-semibold 
+                        <span class="px-5 py-2 rounded-xl font-semibold 
                             @if($stage->status === 'vrij') bg-blue-200 text-blue-800 
                             @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
                             @elseif($stage->status === 'goedgekeurd') bg-green-200 text-green-800 
@@ -165,6 +183,7 @@ if ($student && $student->stage_id) {
         @endforelse
     </div>
 </main>
+
 
 <!-- Mijn Keuze -->
 @auth
