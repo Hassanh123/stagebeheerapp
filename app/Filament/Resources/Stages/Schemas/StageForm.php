@@ -24,19 +24,20 @@ class StageForm
                     ->label('Beschrijving'),
 
                 Select::make('company_id')
-                    ->relationship(name: 'company', titleAttribute: 'naam')
+                    ->relationship('company', 'naam')
                     ->required()
                     ->label('Bedrijf'),
 
                 Select::make('teacher_id')
-                    ->relationship(name: 'teacher', titleAttribute: 'naam')
+                    ->relationship('teacher', 'naam')
                     ->nullable()
-                    ->label('Begeleider'),
+                    ->label('Begeleider')
+                    ->helperText('Koppel hier een docent als de stage akkoord is.'),
 
                 // Tags: belongsToMany -> gebruik relationship() + multiple()
                 Select::make('tags')
                     ->label('Tags')
-                    ->relationship(name: 'tags', titleAttribute: 'naam')
+                    ->relationship('tags', 'naam')
                     ->multiple()
                     ->preload()
                     ->searchable()
@@ -45,13 +46,14 @@ class StageForm
                 Select::make('status')
                     ->options([
                         'vrij' => 'Vrij',
-                        'gekozen' => 'Gekozen',
-                        'akkoord' => 'Akkoord',
-                        'niet_akkoord' => 'Niet akkoord',
+                        'in_behandeling' => 'In behandeling',
+                        'goedgekeurd' => 'Goedgekeurd',
+                        'afgekeurd' => 'Afgekeurd',
                     ])
                     ->default('vrij')
                     ->required()
-                    ->label('Status'),
+                    ->label('Status')
+                
             ]);
     }
 }

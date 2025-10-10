@@ -4,66 +4,63 @@ namespace App\Http\Controllers;
 
 use App\Models\Stage;
 use App\Models\Student;
-use App\Models\Company;
+use App\Models\Teacher;
+use App\Models\Notification;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StageController extends Controller
 {
-   public function index(Request $request)
-{
-    $query = Stage::with(['company', 'teacher', 'tags']);
+    public function index(Request $request)
+    {
+        // Haal stages met filters op
+        $query = Stage::with(['company', 'teacher', 'tags']);
 
-    // Filter op tag (indien meegegeven in de URL)
-    if ($request->filled('tag')) {
-        $query->whereHas('tags', function ($q) use ($request) {
-            $q->where('naam', $request->tag);
-        });
-    }
-
-    $stages = $query->get();
-
-    $student = Auth::check() && Auth::user()->role === 'student'
-        ? Auth::user()->student
-        : null;
-
-    $mijnKeuze = null;
-
-    if ($student && $student->stage_id) {
-        $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
-
-        if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
-            $mijnKeuze = $stage;
+        if ($request->filled('tag')) {
+            $query->whereHas('tags', fn($q) => $q->where('naam', $request->tag));
         }
+
+        $stages = $query->get();
+        $tags = Tag::all();
+
+        $student = Auth::user()?->role === 'student' ? Auth::user()->student : null;
+        $mijnKeuze = null;
+        $latestNotification = null;
+
+        if ($student && $student->stage_id) {
+            $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
+
+            if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
+                $mijnKeuze = $stage;
+
+                // Alleen nieuwste notificatie ophalen
+                $latestNotification = Notification::where('user_id', Auth::id())
+                    ->where('stage_id', $stage->id)
+                    ->orderByDesc('created_at')
+                    ->first();
+            } else {
+                // Stage afgekeurd of verwijderd, student vrijmaken
+                $student->stage_id = null;
+                $student->save();
+            }
+        }
+
+        return view('home', compact('stages', 'tags', 'mijnKeuze', 'latestNotification'));
     }
 
-    // Alle beschikbare tags voor de filter dropdown
-    $tags = Tag::all();
-
-    // Alle bedrijven (voor bijv. home weergave)
-    $companies = Company::all();
-
-    // 👉 Gebruik de home view
-    return view('home', compact('stages', 'companies', 'mijnKeuze', 'tags'));
-}
-
-    /**
-     * Laat een ingelogde student een stage kiezen
-     */
     public function choose(Stage $stage)
     {
         $user = Auth::user();
-
         if (!$user || $user->role !== 'student') {
-            return back()->with('error', 'Je bent geen student.');
+            return back()->with('error', 'Alleen studenten kunnen een stage kiezen.');
         }
 
         $student = $user->student;
 
         if ($student->stage_id) {
-            $gekozenStage = Stage::find($student->stage_id);
-            if ($gekozenStage && in_array($gekozenStage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
+            $huidigeStage = Stage::find($student->stage_id);
+            if ($huidigeStage && in_array($huidigeStage->status, ['in_behandeling', 'goedgekeurd'])) {
                 return back()->with('error', 'Je hebt al een stage gekozen.');
             }
         }
@@ -72,41 +69,76 @@ class StageController extends Controller
             return back()->with('error', 'Deze stage is niet beschikbaar.');
         }
 
-        // Stage reserveren
         $stage->status = 'in_behandeling';
         $stage->save();
 
-        // Koppel stage aan student
         $student->stage_id = $stage->id;
         $student->save();
 
-        return back()->with('success', 'Je keuze is opgeslagen en wordt beoordeeld door de beheerder.');
+        Notification::create([
+            'user_id' => $user->id,
+            'stage_id' => $stage->id,
+            'status' => 'in_behandeling',
+            'message' => "Je stage '{$stage->titel}' staat nu in behandeling. Wacht op goedkeuring door de beheerder.",
+        ]);
+
+        return back()->with('success', 'Je keuze is opgeslagen. Wacht op goedkeuring.');
     }
 
-    /**
-     * Toon de keuze van een specifieke student
-     */
-    public function mijnKeuze(Student $student)
+    public function adminApprove(Stage $stage, Request $request)
     {
-        $mijnKeuze = $student->stage()->with(['teacher', 'company'])->first();
+        if (Auth::user()->role !== 'admin') abort(403);
 
-        return view('mijn-keuze', compact('mijnKeuze'));
-    }
+        $teacher = Teacher::find($request->teacher_id);
+        if (!$teacher) return back()->with('error', 'Ongeldige docent gekozen.');
 
-    /**
-     * Admin keurt stage af
-     */
-    public function adminReject(Stage $stage)
-    {
+        $stage->teacher_id = $teacher->id;
+        $stage->status = 'goedgekeurd';
+        $stage->save();
+
         $student = Student::where('stage_id', $stage->id)->first();
         if ($student) {
-            $student->stage_id = null;
+            Notification::updateOrCreate(
+                [
+                    'user_id' => $student->user_id,
+                    'stage_id' => $stage->id
+                ],
+                [
+                    'status' => 'goedgekeurd',
+                    'message' => "Je keuze voor je stage '{$stage->titel}' is goedgekeurd. Begeleider: {$teacher->naam}.",
+                ]
+            );
+        }
+
+        return back()->with('success', 'Stage goedgekeurd.');
+    }
+
+    public function adminReject(Stage $stage)
+    {
+        if (Auth::user()->role !== 'admin') abort(403);
+
+        $student = Student::where('stage_id', $stage->id)->first();
+
+        if ($student) {
+            Notification::updateOrCreate(
+                [
+                    'user_id' => $student->user_id,
+                    'stage_id' => $stage->id
+                ],
+                [
+                    'status' => 'afgekeurd',
+                    'message' => "Je keuze voor je stage '{$stage->titel}' is afgekeurd. Kies een nieuwe stage.",
+                ]
+            );
+
+            $student->stage_id = null; // student vrijmaken
             $student->save();
         }
 
-        $stage->status = 'vrij';
+        $stage->status = 'vrij'; // stage vrijgeven
+        $stage->teacher_id = null;
         $stage->save();
 
-        return back()->with('error', 'Stage is afgewezen en weer vrijgegeven.');
+        return back()->with('error', 'Stage afgekeurd en weer beschikbaar.');
     }
 }
