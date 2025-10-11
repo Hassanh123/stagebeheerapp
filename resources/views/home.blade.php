@@ -1,14 +1,22 @@
 @php
 use Illuminate\Support\Str;
 use App\Models\Stage;
+use App\Models\Notification;
 
 $student = auth()->user()?->student;
 $mijnKeuze = null;
+$latestNotification = null;
 
 if ($student && $student->stage_id) {
     $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
     if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
         $mijnKeuze = $stage;
+
+        // Haal de laatste notificatie voor deze stage op
+        $latestNotification = Notification::where('user_id', auth()->id())
+            ->where('stage_id', $stage->id)
+            ->latest()
+            ->first();
     }
 }
 @endphp
@@ -68,21 +76,6 @@ if ($student && $student->stage_id) {
     </div>
 </section>
 
-<!-- Notifications -->
-@auth
-@if(isset($notifications) && count($notifications))
-<div class="max-w-7xl mx-auto px-4 mt-4 space-y-2">
-    @foreach($notifications as $notification)
-        <div class="p-3 rounded-xl shadow text-center 
-                    {{ $notification->read_at ? 'bg-gray-100 text-gray-700' : 'bg-blue-100 text-blue-800 font-semibold' }}">
-            {{ $notification->message }}
-            <span class="text-xs block mt-1 text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
-        </div>
-    @endforeach
-</div>
-@endif
-@endauth
-
 <!-- Flash messages -->
 <div class="max-w-7xl mx-auto px-4 mt-4">
     @if(session('success'))
@@ -121,8 +114,6 @@ if ($student && $student->stage_id) {
         <!-- Stage cards -->
         @forelse($stages as $stage)
         <div class="bg-white rounded-3xl shadow-lg p-5 grid grid-cols-1 md:grid-cols-3 gap-5 items-center hover:shadow-xl transition">
-
-            <!-- Info links -->
             <div class="md:col-span-2 space-y-1">
                 <h3 class="text-2xl font-bold text-indigo-800">{{ $stage->titel }}</h3>
                 <p class="text-gray-600">{{ $stage->beschrijving ?? 'Geen beschrijving beschikbaar' }}</p>
@@ -135,7 +126,7 @@ if ($student && $student->stage_id) {
                 </div>
             </div>
 
-            <!-- Actie / status rechts -->
+            <!-- Status / Actie -->
             <div class="text-center md:text-right">
                 @auth
                     @if(auth()->user()->role === 'student')
@@ -143,8 +134,7 @@ if ($student && $student->stage_id) {
                             <form action="{{ route('stages.choose', $stage->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" 
-                                        class="bg-green-200 text-green-800 font-semibold py-2 px-5 rounded-xl hover:bg-green-300 transition"
-                                        onclick="this.form.submit(); this.disabled=true;">
+                                    class="bg-green-200 text-green-800 font-semibold py-2 px-5 rounded-xl hover:bg-green-300 transition">
                                     Kies deze stage
                                 </button>
                             </form>
@@ -154,7 +144,7 @@ if ($student && $student->stage_id) {
                                 @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
                                 @elseif($stage->status === 'goedgekeurd') bg-green-200 text-green-800 
                                 @elseif($stage->status === 'afgekeurd') bg-red-200 text-red-800 @endif">
-                                {{ ucfirst(str_replace('_',' ', $stage->status)) }}
+                                {{ ucfirst(str_replace('_', ' ', $stage->status)) }}
                             </span>
                         @endif
                     @else
@@ -163,7 +153,7 @@ if ($student && $student->stage_id) {
                             @elseif($stage->status === 'in_behandeling') bg-yellow-200 text-yellow-800 
                             @elseif($stage->status === 'goedgekeurd') bg-green-200 text-green-800 
                             @elseif($stage->status === 'afgekeurd') bg-red-200 text-red-800 @endif">
-                            {{ ucfirst(str_replace('_',' ', $stage->status)) }}
+                            {{ ucfirst(str_replace('_', ' ', $stage->status)) }}
                         </span>
                     @endif
                 @else
@@ -196,6 +186,7 @@ if ($student && $student->stage_id) {
 <section class="py-12 bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-6">
         <h2 class="text-3xl font-extrabold text-indigo-800 mb-6 border-b-2 border-indigo-300 pb-2">Mijn Keuze (BPV)</h2>
+
         <div class="bg-indigo-50 rounded-2xl shadow-md p-6 space-y-4">
             <h3 class="text-2xl font-bold text-indigo-700">{{ $mijnKeuze->titel }}</h3>
             <p class="text-gray-600">{{ $mijnKeuze->beschrijving ?? 'Geen beschrijving beschikbaar' }}</p>
@@ -203,17 +194,27 @@ if ($student && $student->stage_id) {
                 <div><span class="font-medium">Bedrijf:</span> {{ $mijnKeuze->company->naam ?? 'Onbekend' }}</div>
                 <div><span class="font-medium">Begeleider:</span> {{ $mijnKeuze->teacher->naam ?? 'Nog niet gekoppeld' }}</div>
             </div>
+
+            @php
+                $status = $mijnKeuze->status;
+                $bericht = $latestNotification->message ?? match($status) {
+                    'in_behandeling' => 'Je aanvraag is ingediend en wordt beoordeeld door de beheerder.',
+                    'goedgekeurd' => 'Gefeliciteerd! Je stage is goedgekeurd door de beheerder.' . 
+                                     ($mijnKeuze->teacher ? ' Begeleider: '.$mijnKeuze->teacher->naam.'.' : ''),
+                    'afgekeurd' => 'Je stage is helaas afgekeurd door de beheerder. Kies een nieuwe stage uit de beschikbare opties.',
+                    default => 'Status van je stage is bijgewerkt.'
+                };
+            @endphp
+
             <div class="text-center mt-4">
-                @if($mijnKeuze->status === 'in_behandeling')
-                    <span class="bg-yellow-200 text-yellow-800 px-4 py-2 rounded-xl font-semibold">In behandeling</span>
-                    <p class="text-gray-600 mt-1">Wacht op goedkeuring door de beheerder.</p>
-                @elseif($mijnKeuze->status === 'goedgekeurd')
-                    <span class="bg-green-200 text-green-800 px-4 py-2 rounded-xl font-semibold">Goedgekeurd</span>
-                    <p class="text-gray-600 mt-1">Je stage is goedgekeurd door de beheerder.</p>
-                @elseif($mijnKeuze->status === 'afgekeurd')
-                    <span class="bg-red-200 text-red-800 px-4 py-2 rounded-xl font-semibold">Afgekeurd</span>
-                    <p class="text-gray-600 mt-1">Je stage is afgekeurd door de beheerder. Kies een nieuwe stage uit de beschikbare opties.</p>
-                @endif
+                <span class="px-4 py-2 rounded-xl font-semibold
+                    @if($status === 'in_behandeling') bg-yellow-200 text-yellow-800
+                    @elseif($status === 'goedgekeurd') bg-green-200 text-green-800
+                    @elseif($status === 'afgekeurd') bg-red-200 text-red-800
+                    @else bg-gray-200 text-gray-800 @endif">
+                    {{ ucfirst(str_replace('_', ' ', $status)) }}
+                </span>
+                <p class="text-gray-700 mt-2">{{ $bericht }}</p>
             </div>
         </div>
     </div>

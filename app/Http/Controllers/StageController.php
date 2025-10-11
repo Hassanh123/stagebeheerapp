@@ -12,11 +12,15 @@ use Illuminate\Support\Facades\Auth;
 
 class StageController extends Controller
 {
+    /**
+     * Toon de homepage met beschikbare stages.
+     */
     public function index(Request $request)
     {
-        // Haal stages met filters op
+        // Basisquery met relaties
         $query = Stage::with(['company', 'teacher', 'tags']);
 
+        // Filter op tag (indien gekozen)
         if ($request->filled('tag')) {
             $query->whereHas('tags', fn($q) => $q->where('naam', $request->tag));
         }
@@ -34,13 +38,13 @@ class StageController extends Controller
             if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
                 $mijnKeuze = $stage;
 
-                // Alleen nieuwste notificatie ophalen
+                // Nieuwste notificatie ophalen voor deze stage
                 $latestNotification = Notification::where('user_id', Auth::id())
                     ->where('stage_id', $stage->id)
-                    ->orderByDesc('created_at')
+                    ->latest()
                     ->first();
             } else {
-                // Stage afgekeurd of verwijderd, student vrijmaken
+                // Stage verwijderd of vrijgegeven → student vrijmaken
                 $student->stage_id = null;
                 $student->save();
             }
@@ -49,15 +53,20 @@ class StageController extends Controller
         return view('home', compact('stages', 'tags', 'mijnKeuze', 'latestNotification'));
     }
 
+    /**
+     * Student kiest een stage.
+     */
     public function choose(Stage $stage)
     {
         $user = Auth::user();
+
         if (!$user || $user->role !== 'student') {
             return back()->with('error', 'Alleen studenten kunnen een stage kiezen.');
         }
 
         $student = $user->student;
 
+        // Controleer of student al een stage heeft
         if ($student->stage_id) {
             $huidigeStage = Stage::find($student->stage_id);
             if ($huidigeStage && in_array($huidigeStage->status, ['in_behandeling', 'goedgekeurd'])) {
@@ -65,16 +74,19 @@ class StageController extends Controller
             }
         }
 
+        // Controleer of stage nog vrij is
         if ($stage->status !== 'vrij') {
             return back()->with('error', 'Deze stage is niet beschikbaar.');
         }
 
+        // Update stage en student
         $stage->status = 'in_behandeling';
         $stage->save();
 
         $student->stage_id = $stage->id;
         $student->save();
 
+        // Notificatie aanmaken
         Notification::create([
             'user_id' => $user->id,
             'stage_id' => $stage->id,
@@ -85,57 +97,66 @@ class StageController extends Controller
         return back()->with('success', 'Je keuze is opgeslagen. Wacht op goedkeuring.');
     }
 
+    /**
+     * Admin keurt stage goed.
+     */
     public function adminApprove(Stage $stage, Request $request)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
 
         $teacher = Teacher::find($request->teacher_id);
-        if (!$teacher) return back()->with('error', 'Ongeldige docent gekozen.');
+        if (!$teacher) {
+            return back()->with('error', 'Ongeldige docent gekozen.');
+        }
 
+        // Update stage
         $stage->teacher_id = $teacher->id;
         $stage->status = 'goedgekeurd';
         $stage->save();
 
+        // Koppel notificatie aan student
         $student = Student::where('stage_id', $stage->id)->first();
         if ($student) {
-            Notification::updateOrCreate(
-                [
-                    'user_id' => $student->user_id,
-                    'stage_id' => $stage->id
-                ],
-                [
-                    'status' => 'goedgekeurd',
-                    'message' => "Je keuze voor je stage '{$stage->titel}' is goedgekeurd. Begeleider: {$teacher->naam}.",
-                ]
-            );
+            Notification::create([
+                'user_id' => $student->user_id,
+                'stage_id' => $stage->id,
+                'status' => 'goedgekeurd',
+                'message' => "Je keuze voor je stage '{$stage->titel}' is goedgekeurd. Begeleider: {$teacher->naam}.",
+            ]);
         }
 
         return back()->with('success', 'Stage goedgekeurd.');
     }
 
+    /**
+     * Admin keurt stage af.
+     */
     public function adminReject(Stage $stage)
     {
-        if (Auth::user()->role !== 'admin') abort(403);
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
 
         $student = Student::where('stage_id', $stage->id)->first();
 
         if ($student) {
-            Notification::updateOrCreate(
-                [
-                    'user_id' => $student->user_id,
-                    'stage_id' => $stage->id
-                ],
-                [
-                    'status' => 'afgekeurd',
-                    'message' => "Je keuze voor je stage '{$stage->titel}' is afgekeurd. Kies een nieuwe stage.",
-                ]
-            );
+            // Notificatie voor afkeuring
+            Notification::create([
+                'user_id' => $student->user_id,
+                'stage_id' => $stage->id,
+                'status' => 'afgekeurd',
+                'message' => "Je keuze voor je stage '{$stage->titel}' is afgekeurd. Kies een nieuwe stage.",
+            ]);
 
-            $student->stage_id = null; // student vrijmaken
+            // Student vrijmaken
+            $student->stage_id = null;
             $student->save();
         }
 
-        $stage->status = 'vrij'; // stage vrijgeven
+        // Stage weer vrijgeven
+        $stage->status = 'vrij';
         $stage->teacher_id = null;
         $stage->save();
 
