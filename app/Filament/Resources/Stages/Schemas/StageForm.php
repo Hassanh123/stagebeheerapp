@@ -33,7 +33,6 @@ class StageForm
                     ->nullable()
                     ->label('Begeleider'),
 
-                // Tags: belongsToMany -> gebruik relationship() + multiple()
                 Select::make('tags')
                     ->label('Tags')
                     ->relationship(name: 'tags', titleAttribute: 'naam')
@@ -42,12 +41,13 @@ class StageForm
                     ->searchable()
                     ->columnSpanFull(),
 
+                // ✅ Correcte status opties
                 Select::make('status')
                     ->options([
                         'vrij' => 'Vrij',
-                        'gekozen' => 'Gekozen',
-                        'akkoord' => 'Akkoord',
-                        'niet_akkoord' => 'Niet akkoord',
+                        'in_behandeling' => 'In behandeling',
+                        'goedgekeurd' => 'Goedgekeurd',
+                        'afgekeurd' => 'Afgekeurd',
                     ])
                     ->default('vrij')
                     ->required()
