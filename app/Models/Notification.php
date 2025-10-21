@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    use HasFactory;
+    protected $table = 'notifications';
+    protected $primaryKey = 'notification_id'; // correcte primaire sleutel
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $primaryKey = 'notification_id';
+    protected $fillable = ['user_id', 'stage_id', 'status', 'message', 'read_at'];
 
-    protected $fillable = [
-        'user_id',
-        'message',
-        'read_at',
-    ];
-
-    public function user()
+    // Relatie naar stage
+    public function stage()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Stage::class);
+    }
+
+    // Accessor voor actuele status van de stage
+    public function getCurrentStatusAttribute()
+    {
+        return $this->stage?->status ?? $this->status;
     }
 }
