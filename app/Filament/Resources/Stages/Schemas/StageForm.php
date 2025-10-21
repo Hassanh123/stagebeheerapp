@@ -24,18 +24,19 @@ class StageForm
                     ->label('Beschrijving'),
 
                 Select::make('company_id')
-                    ->relationship(name: 'company', titleAttribute: 'naam')
+                    ->relationship('company', 'naam')
                     ->required()
                     ->label('Bedrijf'),
 
                 Select::make('teacher_id')
-                    ->relationship(name: 'teacher', titleAttribute: 'naam')
+                    ->relationship('teacher', 'naam')
                     ->nullable()
-                    ->label('Begeleider'),
+                    ->label('Begeleider')
+                    ->helperText('Koppel hier een docent als de stage akkoord is.'),
 
                 Select::make('tags')
                     ->label('Tags')
-                    ->relationship(name: 'tags', titleAttribute: 'naam')
+                    ->relationship('tags', 'naam')
                     ->multiple()
                     ->preload()
                     ->searchable()
@@ -51,7 +52,8 @@ class StageForm
                     ])
                     ->default('vrij')
                     ->required()
-                    ->label('Status'),
+                    ->label('Status')
+                
             ]);
     }
 }
