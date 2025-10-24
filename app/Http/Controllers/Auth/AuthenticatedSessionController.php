@@ -34,12 +34,9 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerate();
             $user = Auth::guard('web')->user();
 
-            if ($user->role === 'student') {
+            // ✅ Zowel studenten als docenten gaan naar 'home'
+            if (in_array($user->role, ['student', 'teacher'])) {
                 return redirect()->route('home');
-            }
-
-            if ($user->role === 'teacher') {
-                return redirect()->route('dashboard');
             }
 
             // Admins mogen hier niet inloggen
@@ -59,13 +56,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // 👈 Alleen web guard uitloggen
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // 👈 Redirect naar home
+        // ✅ Na uitloggen netjes naar homepagina
         return redirect('/');
     }
 }

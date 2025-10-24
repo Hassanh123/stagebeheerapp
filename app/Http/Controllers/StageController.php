@@ -18,24 +18,28 @@ class StageController extends Controller
         $student = $user && $user->role === 'student' ? $user->student : null;
         $mijnKeuze = null;
         $notification = null;
-        $teacherStages = null;
-        $teacherStudents = null;
+        $teacherStages = collect();
+        $teacherStudents = collect();
 
-        // Student
+        /**
+         * =========================
+         * STUDENT
+         * =========================
+         */
         if ($student && $student->stage_id) {
             $stage = Stage::with(['company', 'teacher', 'tags'])->find($student->stage_id);
 
             if ($stage && in_array($stage->status, ['in_behandeling', 'goedgekeurd', 'afgekeurd'])) {
                 $mijnKeuze = $stage;
 
-                // Haal de meest recente notificatie voor deze stage
+                // meest recente notificatie ophalen
                 $notification = Notification::where('user_id', $user->id)
                     ->where('stage_id', $stage->id)
                     ->latest('created_at')
                     ->first();
 
                 if ($notification) {
-                    // Altijd de huidige status van de stage van de student gebruiken
+                    // huidige status updaten
                     $notification->status = $stage->status;
 
                     if (is_null($notification->read_at)) {
@@ -47,21 +51,37 @@ class StageController extends Controller
             }
         }
 
-        // Teacher
+        /**
+         * =========================
+         * TEACHER
+         * =========================
+         */
         if ($user && $user->role === 'teacher') {
-            $teacherStages = Stage::with(['company', 'teacher', 'tags'])
-                ->where('teacher_id', $user->teacher->id)
-                ->get();
+            $teacher = $user->teacher;
 
-            $stageIds = $teacherStages->pluck('id')->toArray();
-            if (!empty($stageIds)) {
-                $teacherStudents = Student::whereIn('stage_id', $stageIds)
-                    ->with('user')
+            if ($teacher) {
+                // Haal stages van deze docent via relatie
+                $teacherStages = $teacher->stages()
+                    ->with(['company', 'tags', 'students.user'])
                     ->get();
+
+                // Verzamel studenten die aan deze stages gekoppeld zijn
+                $teacherStudents = $teacherStages
+                    ->flatMap(function ($stage) {
+                        return $stage->students ?? collect();
+                    })
+                    ->unique('id')
+                    ->values();
             }
         }
 
-        return view('home', compact('stages', 'mijnKeuze', 'notification', 'teacherStages', 'teacherStudents'));
+        return view('home', compact(
+            'stages',
+            'mijnKeuze',
+            'notification',
+            'teacherStages',
+            'teacherStudents'
+        ));
     }
 
     public function choose(Stage $stage)
@@ -73,7 +93,7 @@ class StageController extends Controller
 
         $student = $user->student;
 
-        // Reset eerdere in-behandeling stage van deze student
+        // Reset eerdere in-behandeling stage
         if ($student->stage_id) {
             $gekozenStage = Stage::find($student->stage_id);
             if ($gekozenStage && $gekozenStage->status === 'in_behandeling') {
@@ -95,7 +115,7 @@ class StageController extends Controller
         Notification::create([
             'user_id' => $user->id,
             'stage_id' => $stage->id,
-            'status' => $stage->status, // juiste huidige status
+            'status' => $stage->status,
             'message' => "Je hebt een stage gekozen: '{$stage->titel}'. Deze wordt beoordeeld door de beheerder.",
         ]);
 
@@ -148,7 +168,7 @@ class StageController extends Controller
             })
             ->update(['status' => 'vrij']);
 
-        // Teacher koppeling
+        // Teacher koppelen
         if ($request->filled('teacher_id')) {
             $stage->teacher_id = $request->teacher_id;
         }
@@ -160,7 +180,7 @@ class StageController extends Controller
         Notification::create([
             'user_id' => $student->user_id,
             'stage_id' => $stage->id,
-            'status' => $stage->status, // correcte actuele status
+            'status' => $stage->status,
             'message' => "🎉 Je keuze voor '{$stage->titel}' is goedgekeurd. Begeleider: " . ($stage->teacher?->naam ?? 'Nog niet toegewezen') . ".",
         ]);
 
