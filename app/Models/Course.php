@@ -27,11 +27,6 @@ class Course extends Model
         return $this->belongsTo(Stage::class);
     }
 
-    /**
-     * Course behoort tot een Teacher (optioneel)
-     */
-    public function teacher(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class);
-    }
+  
+
 }
