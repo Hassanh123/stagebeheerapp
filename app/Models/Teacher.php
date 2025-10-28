@@ -30,18 +30,6 @@ class Teacher extends Model
         return $this->hasMany(Stage::class, 'teacher_id');
     }
 
-    /**
-     * Relatie: een teacher heeft meerdere studenten via stages
-     */
-    public function students()
-    {
-        return $this->hasManyThrough(
-            Student::class,
-            Stage::class,
-            'teacher_id',  // foreign key in stages
-            'stage_id',    // foreign key in students
-            'id',          // local key in teachers
-            'id'           // local key in stages
-        );
-    }
+ 
+    
 }

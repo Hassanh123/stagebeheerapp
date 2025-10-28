@@ -21,9 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(TeacherSeeder::class);
         $this->call(StageSeeder::class);
         $this->call(StudentSeeder::class);
-
-        // Seeders die afhankelijk zijn van studenten/stages
         $this->call(CoursesTableSeeder::class);
-        $this->call(NotificationsTableSeeder::class);
     }
 }

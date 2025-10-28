@@ -34,7 +34,8 @@ class StudentSeeder extends Seeder
 
         $students = [];
 
-        for ($i = 1; $i <= 50; $i++) {
+        // → Aantal studenten verlaagd van 50 naar 35
+        for ($i = 1; $i <= 35; $i++) {
             $first = $firstNames[array_rand($firstNames)];
             $last = $lastNames[array_rand($lastNames)];
 
